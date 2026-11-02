@@ -135,10 +135,12 @@ When deployed, FreeRead utilizes an edge function to protect the client and ensu
 
 ```
 freeread/
-├── index.html              # The complete reading room web application
+├── public/                 # Static assets directory
+│   ├── index.html          # The complete reading room web application
+│   ├── _headers            # HTTP security headers (CSP, HSTS, X-Frame-Options)
+│   └── _routes.json        # Cloudflare routing configuration
+├── index.html              # Standalone web application entry point
 ├── worker.js               # Cloudflare Worker entry point with static asset binding
-├── _headers                # HTTP security headers (CSP, HSTS, X-Frame-Options)
-├── _routes.json            # Cloudflare Pages routing configuration
 ├── wrangler.toml           # Cloudflare configuration file
 ├── package.json            # Project metadata and development scripts
 ├── LICENSE                 # Apache License 2.0

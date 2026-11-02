@@ -1,0 +1,11 @@
+node_modules
+.git
+.wrangler
+functions
+worker.js
+*.md
+package.json
+package-lock.json
+bun.lock
+bun.lockb
+wrangler.toml
