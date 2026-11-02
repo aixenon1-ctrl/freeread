@@ -32,6 +32,7 @@ const ALLOWED_HOSTS = [
   "api.mangadex.org",
   "uploads.mangadex.org",
   "cmd.mangadex.org",
+  "mangadex.network",
   "thuprai.com"
 ];
 
@@ -214,8 +215,8 @@ export async function onRequest(context) {
       headers: responseHeaders
     });
 
-    // Cache successful GET responses in Cloudflare edge cache
-    if (request.method === "GET" && upstreamResponse.ok) {
+    // Cache successful GET responses (status 200) in Cloudflare edge cache
+    if (request.method === "GET" && upstreamResponse.status === 200) {
       context.waitUntil(cache.put(cacheKey, modifiedResponse.clone()));
     }
 
