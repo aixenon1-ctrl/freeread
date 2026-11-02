@@ -438,9 +438,20 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .shelf-strip > *{scroll-snap-align:start; flex:none}
 /* every card in a horizontal shelf shares one fixed width, so previews
    never balloon with long titles (the small/big cover bug) */
-.shelf-strip .vol-card{width:154px}
+.shelf-strip .vol-card{width:176px}
 .shelf-strip .paper-card{width:340px; flex:none}
-.shelf-strip .sk-col{width:154px; display:flex; flex-direction:column; gap:8px}
+.shelf-strip .sk-col{width:176px; display:flex; flex-direction:column; gap:8px}
+.shelf-arrow{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+  width:36px; height:36px; border-radius:50%; background:var(--surf);
+  border:var(--sp2); box-shadow:var(--shadow-lg); font-size:20px;
+  color:var(--ink); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; opacity:0; transition:opacity .2s, transform .15s;
+}
+.shelf:hover .shelf-arrow{opacity:.95}
+.shelf-arrow:hover{opacity:1; transform:translateY(-50%) scale(1.08); background:var(--surfH); border-color:var(--brass)}
+.shelf-arrow.shelf-prev{left:-12px}
+.shelf-arrow.shelf-next{right:-12px}
 .shelf-strip .sk-col .sk{width:100%; aspect-ratio:3/4}
 .shelf-strip .sk-col.sk-paper{width:330px}
 .shelf-strip .sk-col.sk-paper .sk{aspect-ratio:auto}
@@ -455,9 +466,15 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .vol-card{display:flex; flex-direction:column; gap:8px; cursor:pointer; position:relative}
 .vol-card:hover .cover-wrap{transform:translateY(-3px)}
 .cover-wrap{
-  position:relative; aspect-ratio:3/4; border-radius:5px; overflow:hidden;
+  position:relative; aspect-ratio:3/4; border-radius:6px; overflow:hidden;
   border:var(--sp2); background:var(--surf2);
-  box-shadow:var(--shadow); transition:transform .18s var(--ease), box-shadow .18s;
+  box-shadow:0 4px 14px rgba(44,36,24,.14), 0 1px 3px rgba(44,36,24,.08);
+  transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.cover-wrap::after{
+  content:""; position:absolute; top:0; bottom:0; left:0; width:8px;
+  background:linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,.08) 50%, transparent);
+  pointer-events:none; z-index:3;
 }
 .vol-card:hover .cover-wrap{box-shadow:var(--shadow-lg)}
 .cover-wrap img{width:100%; height:100%; object-fit:cover}
@@ -839,8 +856,9 @@ body.in-reader .topbar, body.in-reader #main, body.in-reader .footer{display:non
   font-size:var(--rd-size, 19px); line-height:var(--rd-lh, 1.62);
   color:var(--ink); letter-spacing:.005em;
 }
-.text-article.wide{--rd-width:860px}
-.text-article.narrow{--rd-width:560px}
+.text-article.wide{--rd-width:940px}
+.text-article.narrow{--rd-width:620px}
+.text-article.xlarge{--rd-width:1120px}
 .text-article p{margin:0 0 1.05em; orphans:2; widows:2}
 .text-article p + p{text-indent:1.35em}
 .text-article.just p{text-align:justify; hyphens:auto}
@@ -905,6 +923,17 @@ body.in-reader .topbar, body.in-reader #main, body.in-reader .footer{display:non
 .scan-page-wrap .sk-page{position:absolute; inset:0}
 .scan-page-wrap.loading img{opacity:0}
 .scan-page-wrap img{transition:opacity .3s var(--ease)}
+.scan-loader{
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:12px;
+  background:var(--surf2); z-index:5;
+}
+.scan-loader .spin-ring{
+  width:32px; height:32px; border:3px solid var(--rule2);
+  border-top-color:var(--accent); border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+.scan-loader .scan-load-txt{font-size:13px; color:var(--ink2); font-family:var(--f-sans); font-weight:500}
 .scan-hint{position:absolute; bottom:12px; left:50%; transform:translateX(-50%); z-index:20; pointer-events:none;
   font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:color-mix(in srgb, var(--ink3) 80%, transparent);
   background:color-mix(in srgb, var(--surf) 72%, transparent); padding:4px 12px; border-radius:999px; border:var(--sp)}
@@ -1750,16 +1779,24 @@ const IA = {
     const anyTxt = this.pickFile(files, f => /\.txt$/i.test(f.name || "") && !/djvu|meta|readme|license/i.test(f.name) && size(f) > 15000 && size(f) < 6500000);
     const djvuTxt = this.pickFile(files, f => /_djvu\.txt$/i.test(f.name || "") && size(f) > 20000 && size(f) < 6500000);
     const imagecount = parseInt(meta.imagecount) || 0;
+    const scanInfo = imagecount > 1 ? { identifier, pages: imagecount } : null;
+
+    // Prefer fast, clean text / OCR when available: loads in 200ms instead of 15 seconds per page!
     if (mirrorTxt || anyTxt) {
       const f = mirrorTxt || anyTxt;
       return Object.assign(base, {
         type: "text", url: this.dlUrl(identifier, f.name), fmt: "txt",
         fallbacks: [djvuTxt ? this.dlUrl(identifier, djvuTxt.name) : null].filter(Boolean),
-        key: "ia:" + identifier, ident: identifier,
+        key: "ia:" + identifier, ident: identifier, scans: scanInfo,
+      });
+    }
+    if (djvuTxt) {
+      return Object.assign(base, {
+        type: "text", url: this.dlUrl(identifier, djvuTxt.name), fmt: "ocr",
+        key: "ia:" + identifier, ident: identifier, scans: scanInfo,
       });
     }
     if (imagecount > 1) return Object.assign(base, { type: "scan", identifier, pages: imagecount });
-    if (djvuTxt) return Object.assign(base, { type: "text", url: this.dlUrl(identifier, djvuTxt.name), fmt: "ocr", key: "ia:" + identifier, ident: identifier });
     return Object.assign(base, { type: null });
   },
 };
@@ -2104,10 +2141,13 @@ const Curated = {
   fmtYear(c) { const y = c.y; return y == null ? "" : y < 0 ? Math.abs(y) + " BC" : String(y); },
   item(c) {
     const pdf = c.kind === "pdf", scan = c.kind === "scan";
+    const ident = c.ident || (c.id && c.id.startsWith("ia:") && c.id.slice(3));
+    const cover = pdf ? null : ident ? ("https://archive.org/services/img/" + encodeURIComponent(ident))
+      : (c.id && c.id.startsWith("pg:") ? ("https://www.gutenberg.org/cache/epub/" + c.id.slice(3) + "/pg" + c.id.slice(3) + ".cover.medium.jpg") : null);
     return {
       id: c.id, src: pdf ? "arx" : "ia",
       title: c.t, byline: c.a, year: c.y, yearLabel: this.fmtYear(c),
-      lang: "eng", subjects: [], cover: null, desc: "", badge: pdf ? "oa" : "read", popular: 0,
+      lang: "eng", subjects: [], cover: cover, desc: "", badge: pdf ? "oa" : "read", popular: 0,
       kindLabel: pdf ? "Open-access paper" : scan ? "Digitized volume" : "E-book edition",
       formats: pdf ? ["pdf"] : scan ? ["scan"] : ["text"],
       read: pdf ? { kind: "arx", arx: c.arx } : { kind: "ia", identifier: c.ident },
@@ -2373,13 +2413,32 @@ const Comps = {
   },
   /* All covers are typeset in-app on parchment: one exact size everywhere,
      zero remote images, zero catalog branding, zero loading time. */
+  coverUrl(item) {
+    if (item.cover) return item.cover;
+    const ident = (item.read && item.read.identifier) || (item.id && item.id.startsWith("ia:") && item.id.slice(3)) || item.ident;
+    if (ident && (item.src === "ia" || (item.id && item.id.startsWith("ia:")) || (item.read && item.read.kind === "ia"))) {
+      return "https://archive.org/services/img/" + encodeURIComponent(ident);
+    }
+    const pg = (item.id && item.id.startsWith("pg:") && item.id.slice(3)) || item.pg;
+    if (pg && /^\d+$/.test(pg)) {
+      return "https://www.gutenberg.org/cache/epub/" + pg + "/pg" + pg + ".cover.medium.jpg";
+    }
+    if (item.src === "ol" && item.coverId) {
+      return "https://covers.openlibrary.org/b/id/" + encodeURIComponent(item.coverId) + "-M.jpg";
+    }
+    return null;
+  },
   cover(item, extraCls) {
     const badge = this.badge(item);
     const paper = item.src === "pmc" || item.src === "ox" || item.src === "arx";
     const ph = paper
       ? `<div class="cover-ph paper"><span class="ct">${U.esc(U.initials(item.title))}</span><span class="t">${U.esc(item.title)}</span>${ic("ornament", 16, "orn")}</div>`
       : `<div class="cover-ph"><span class="t">${U.esc(item.title)}</span>${item.byline ? `<span class="a">${U.esc(item.byline.split(",")[0])}</span>` : ""}${ic("ornament", 16, "orn")}</div>`;
-    return `<div class="cover-wrap ${extraCls || ""}">${ph}${badge}</div>`;
+    const curl = !paper ? this.coverUrl(item) : null;
+    const imgHtml = curl
+      ? `<img class="ph-overlay" src="${U.esc(curl)}" alt="" loading="lazy" data-ia-cover="1" onload="this.classList.add('ok')" onerror="this.remove()">`
+      : "";
+    return `<div class="cover-wrap ${extraCls || ""}">${ph}${imgHtml}${badge}</div>`;
   },
   volCard(item) {
     const isPaper = item.src === "pmc" || item.src === "ox" || item.src === "arx";
@@ -2408,7 +2467,11 @@ const Comps = {
   shelfSection(id, title, sub, moreHref) {
     return `<section class="section" data-shelf="${id}">
       <div class="section-head"><h2>${U.esc(title)}</h2>${sub ? `<span class="sub">${U.esc(sub)}</span>` : ""}${moreHref ? `<a class="more" href="${U.esc(moreHref)}">View all ${ic("arrowR", 14)}</a>` : ""}</div>
-      <div class="shelf"><div class="shelf-strip" data-strip>${this.skCards(8)}</div></div>
+      <div class="shelf">
+        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+        <div class="shelf-strip" data-strip>${this.skCards(8)}</div>
+        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
+      </div>
     </section>`;
   },
   fillStrip(strip, items) {
@@ -2702,10 +2765,10 @@ Views.home = async function (main) {
     sec.hidden = false;
     sec.querySelector("[data-continue-grid]").innerHTML = docs.map(d => `
       <article class="doc-card" data-open="${U.esc(d.id)}" tabindex="0" role="button">
-        <div class="cover-wrap"><div class="cover-ph"><span class="t">${U.esc(d.title)}</span></div></div>
+        ${Comps.cover(d)}
         <div class="body"><h3>${U.esc(d.title)}</h3><div class="va">${U.esc(d.byline || d.kindLabel)}</div>
           <div class="progress"><i style="width:${Math.round((d.progress.percent || 0) * 100)}%"></i></div>
-          <div class="foot"><span class="status-pill s-reading">${ic("openbook", 12)} ${U.esc(d.progress.label || "in progress")}</span></div>
+          <div class="foot"><span class="status-pill s-reading">${ic("openbook", 12)} ${U.esc(d.progress.label || "in progress")}</span><span class="small muted" style="margin-left:auto">${Math.round((d.progress.percent || 0) * 100)}%</span></div>
         </div>
       </article>`).join("");
     U.$$("[data-open]", sec).forEach(c => {
@@ -3761,7 +3824,7 @@ const Reader = {
         <div class="rd-set-row"><span class="lbl">Text size</span><input type="range" class="range" id="rs-size" min="15" max="26" step="0.5"><span class="val" id="rs-size-v"></span></div>
         <div class="rd-set-row"><span class="lbl">Line height</span><input type="range" class="range" id="rs-lh" min="1.3" max="2" step="0.02"><span class="val" id="rs-lh-v"></span></div>
         <div class="rd-set-row"><span class="lbl">Column width</span>
-          <div class="theme-seg" id="rs-width"><button data-w="s">Narrow</button><button data-w="m">Medium</button><button data-w="l">Wide</button></div></div>
+          <div class="theme-seg" id="rs-width"><button data-w="s">Narrow (620px)</button><button data-w="m">Standard (760px)</button><button data-w="l">Wide (940px)</button><button data-w="xl">Full (1120px)</button></div></div>
         <div class="rd-set-row"><span class="lbl">Justify</span><label class="switch"><input type="checkbox" id="rs-just"><span class="tr"></span></label></div>
         <div class="rd-set-row" id="rs-cleanup-row" hidden><span class="lbl">Text cleanup<small>Remove junk glyphs &amp; stray markup</small></span><label class="switch"><input type="checkbox" id="rs-cleanup"><span class="tr"></span></label></div>
       </div>
@@ -3854,7 +3917,7 @@ const Reader = {
     s.setProperty("--rd-size", Prefs.get("rdSize") + "px");
     s.setProperty("--rd-lh", String(Prefs.get("rdLh")));
     const w = Prefs.get("rdWidth");
-    U.$$(".text-article").forEach(a => { a.classList.remove("narrow", "wide"); if (w === "s") a.classList.add("narrow"); if (w === "l") a.classList.add("wide"); });
+    U.$$(".text-article").forEach(a => { a.classList.remove("narrow", "wide", "xlarge"); if (w === "s") a.classList.add("narrow"); if (w === "l") a.classList.add("wide"); if (w === "xl") a.classList.add("xlarge"); });
     U.$$(".text-article").forEach(a => a.classList.toggle("just", !!Prefs.get("justify")));
   },
   syncSettings() {
@@ -4571,10 +4634,15 @@ class ScanRenderer {
   }
   async mount(stage) {
     stage.classList.add("scan-stage");
-    stage.innerHTML = `<div class="scan-page-wrap loading"><img alt="Page scan"><div class="sk sk-page"></div></div><div class="scan-hint">Digitized page images · zoom with + / −</div>`;
+    stage.innerHTML = `<div class="scan-page-wrap loading"><img alt="Page scan"><div class="scan-loader"><div class="spin-ring"></div><div class="scan-load-txt">Loading page <span id="sk-pg-num">1</span> of ${this.pages}…</div></div></div><div class="scan-hint">Digitized page images · Use Fit Width or + / - to zoom</div>`;
     this.wrap = stage.querySelector(".scan-page-wrap");
     this.img = this.wrap.querySelector("img");
-    this.img.addEventListener("load", () => { this.wrap.classList.remove("loading"); this._preload(); });
+    this.loader = stage.querySelector(".scan-loader");
+    this.img.addEventListener("load", () => {
+      this.wrap.classList.remove("loading");
+      if (this.loader) this.loader.style.display = "none";
+      this._preload();
+    });
     this.img.addEventListener("error", () => this._onImgError());
     this.ctx && (this.ctxReader = true);
     this.buildBar();
@@ -4592,8 +4660,9 @@ class ScanRenderer {
       <input type="range" class="range" id="sp-slider" min="0" max="${this.pages - 1}" value="0" aria-label="Page position">
       <div class="pgroup right">
         <button class="btn icon sm" id="sz-out" aria-label="Zoom out">${ic("zoomOut", 16)}</button>
-        <span class="zoom-lbl" id="sz-lbl">Fit</span>
+        <span class="zoom-lbl" id="sz-lbl">Fit Page</span>
         <button class="btn icon sm" id="sz-in" aria-label="Zoom in">${ic("zoomIn", 16)}</button>
+        <button class="btn sm" id="sz-fit-w" aria-label="Fit width" title="Fit width" style="padding:0 8px;font-size:11.5px">Fit Width</button>
         <button class="btn icon sm" id="sz-fit" aria-label="Fit page" title="Fit page">${ic("fit", 16)}</button>
       </div>`;
     U.$("#sp-prev").addEventListener("click", () => this.prev());
@@ -4603,14 +4672,22 @@ class ScanRenderer {
     U.$("#sz-out").addEventListener("click", () => this.zoomOut());
     U.$("#sz-in").addEventListener("click", () => this.zoomIn());
     U.$("#sz-fit").addEventListener("click", () => { this.zoom = 0; this.applyZoom(); });
+    U.$("#sz-fit-w")?.addEventListener("click", () => { this.zoom = 1; this.applyZoom(); });
   }
   src(n) {
-    const w = this.zoom === 0 ? 1024 : this.ZW[this.zoom] === "full" ? null : this.ZW[this.zoom];
-    return IA.pageImg(this.id, n, w === "full" ? null : w);
+    const w = this.zoom === 0 ? 1024 : this.zoom === 1 ? 1400 : this.ZW[this.zoom] === "full" ? null : this.ZW[this.zoom];
+    const raw = IA.pageImg(this.id, n, w === "full" ? null : w);
+    if (typeof window !== "undefined" && window.location && window.location.protocol.startsWith("http")) {
+      return "/api/proxy?url=" + encodeURIComponent(raw);
+    }
+    return raw;
   }
   render(n, keepZoom) {
     this.n = U.clamp(n, 0, this.pages - 1);
     this.wrap.classList.add("loading");
+    if (this.loader) this.loader.style.display = "flex";
+    const pgNumEl = U.$("#sk-pg-num");
+    if (pgNumEl) pgNumEl.textContent = this.n + 1;
     this.img.src = this.src(this.n);
     this.img.decoding = "async";
     try { this.img.fetchPriority = "high"; } catch (e) {}
@@ -4620,12 +4697,16 @@ class ScanRenderer {
     this.emitProgress();
   }
   applyZoom() {
-    const stage = U.$("#rd-stage");
     if (this.zoom === 0) {
       this.img.style.width = "";
       this.img.style.maxWidth = "min(94vw, 1100px)";
-      this.img.style.maxHeight = "calc(100vh - 175px)";
-      U.$("#sz-lbl").textContent = "Fit";
+      this.img.style.maxHeight = "calc(100vh - 150px)";
+      U.$("#sz-lbl").textContent = "Fit Page";
+    } else if (this.zoom === 1) {
+      this.img.style.maxWidth = "none";
+      this.img.style.maxHeight = "none";
+      this.img.style.width = "min(94vw, 940px)";
+      U.$("#sz-lbl").textContent = "Fit Width";
     } else {
       this.img.style.maxWidth = "none";
       this.img.style.maxHeight = "none";
