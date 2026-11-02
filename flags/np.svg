@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="500" height="600">
+  <path d="M0 0 L500 300 L200 300 L500 600 L0 600 Z" fill="#003893"/>
+  <path d="M18 36 L435 285 L165 285 L445 570 L18 570 Z" fill="#DC143C"/>
+  <!-- Moon symbol -->
+  <path d="M120 230 A60 60 0 1 1 180 170 A50 50 0 1 0 120 230 Z" fill="#ffffff"/>
+  <!-- Sun symbol -->
+  <circle cx="140" cy="450" r="45" fill="#ffffff"/>
+  <path d="M140 380 L145 405 L165 390 L155 412 L178 405 L160 422 L185 425 L162 438 L185 450 L162 462 L185 475 L160 478 L178 495 L155 488 L165 510 L145 495 L140 520 L135 495 L115 510 L125 488 L102 495 L120 478 L95 475 L118 462 L95 450 L118 438 L95 425 L120 422 L102 405 L125 412 L115 390 L135 405 Z" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="600" height="300">
+  <rect width="1200" height="600" fill="#00008B"/>
+  <g transform="scale(10, 10)">
+    <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+    <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+    <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+  </g>
+  <!-- Southern Cross -->
+  <circle cx="300" cy="450" r="50" fill="#ffffff"/>
+  <circle cx="900" cy="420" r="30" fill="#ffffff"/>
+  <circle cx="800" cy="300" r="30" fill="#ffffff"/>
+  <circle cx="900" cy="180" r="30" fill="#ffffff"/>
+  <circle cx="1000" cy="270" r="30" fill="#ffffff"/>
+  <circle cx="940" cy="330" r="18" fill="#ffffff"/>
+</svg>

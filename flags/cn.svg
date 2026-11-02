@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="600" height="400">
+  <rect width="900" height="600" fill="#DE2910"/>
+  <!-- Main star -->
+  <polygon points="150,75 168,131 228,131 179,166 198,222 150,187 102,222 121,166 72,131 132,131" fill="#FFDE00"/>
+  <!-- Smaller stars -->
+  <circle cx="300" cy="60" r="20" fill="#FFDE00"/>
+  <circle cx="360" cy="120" r="20" fill="#FFDE00"/>
+  <circle cx="360" cy="210" r="20" fill="#FFDE00"/>
+  <circle cx="300" cy="270" r="20" fill="#FFDE00"/>
+</svg>

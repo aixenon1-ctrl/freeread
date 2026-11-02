@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="600" height="300">
+  <rect width="250" height="500" fill="#FF0000"/>
+  <rect x="250" width="500" height="500" fill="#ffffff"/>
+  <rect x="750" width="250" height="500" fill="#FF0000"/>
+  <!-- Maple leaf -->
+  <path d="M500 110 L520 180 L560 170 L540 210 L600 230 L580 270 L620 280 L590 320 L550 310 L520 350 L510 420 L490 420 L480 350 L450 310 L410 320 L380 280 L420 270 L400 230 L460 210 L440 170 L480 180 Z" fill="#FF0000"/>
+</svg>

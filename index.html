@@ -971,6 +971,386 @@ body.in-reader .topbar, body.in-reader #main, body.in-reader .footer{display:non
 .rd-root:fullscreen .rd-top{opacity:0; transition:opacity .25s}
 .rd-root:fullscreen .rd-top:hover{opacity:1}
 .rd-root:fullscreen .rd-top:focus-within{opacity:1}
+/* Real Country Flags & Literature Showcase */
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.country-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px 14px;
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--surfH), var(--surf2));
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .18s var(--ease), border-color .18s, box-shadow .18s;
+  text-decoration: none;
+  color: inherit;
+}
+.country-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--brass);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+}
+.country-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.country-flag-wrap {
+  width: 46px;
+  height: 32px;
+  flex: none;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
+  border: 1px solid rgba(0,0,0,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+.country-flag {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.country-card-title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.country-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.country-native {
+  font-size: 11px;
+  color: var(--ink3);
+  font-family: var(--font-sans);
+}
+.country-blurb {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink2);
+  flex: 1;
+}
+.country-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed var(--sp1);
+  font-size: 11.5px;
+  color: var(--ink3);
+}
+.country-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 10.5px;
+}
+
+/* Open Library Style Subject Category Cards */
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 14px;
+}
+.subject-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  padding: 16px 16px 14px;
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--surfH), var(--surf2));
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .18s var(--ease), border-color .18s, box-shadow .18s;
+  text-decoration: none;
+  color: inherit;
+}
+.subject-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--brass);
+  box-shadow: var(--shadow-lg);
+  text-decoration: none;
+}
+.subject-card .top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.subject-icon {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.subject-card h3 {
+  font-size: 15px;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+}
+.subject-card .blurb {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.45;
+  flex: 1;
+}
+.subject-card .foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px dashed var(--sp1);
+  font-size: 11.5px;
+  color: var(--ink3);
+}
+
+/* In-Content Illustration Viewer & Figures */
+.reader-figure {
+  margin: 28px auto;
+  max-width: 580px;
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  background: var(--surf2);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .2s ease;
+}
+.reader-figure:hover {
+  box-shadow: var(--shadow-lg);
+}
+.figure-frame {
+  position: relative;
+  min-height: 180px;
+  background: color-mix(in srgb, var(--surf) 80%, #000 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+.figure-img {
+  display: block;
+  max-width: 100%;
+  max-height: 520px;
+  width: auto;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+  transition: transform .25s ease, opacity .2s ease;
+  background: #ffffff;
+}
+.reader-figure:not(.fig-loaded) .figure-img {
+  opacity: 0;
+}
+.reader-figure.fig-loaded .figure-img {
+  opacity: 1;
+}
+.reader-figure.fig-loaded .figure-spinner {
+  display: none !important;
+}
+.figure-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink3);
+}
+.fig-zoom-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border-radius: 99px;
+  background: rgba(15, 12, 10, 0.72);
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .2s ease, background .15s ease;
+}
+.figure-frame:hover .fig-zoom-btn {
+  opacity: 1;
+}
+.fig-zoom-btn:hover {
+  background: rgba(15, 12, 10, 0.92);
+}
+.reader-figure.fig-error .figure-frame {
+  min-height: auto;
+  padding: 18px;
+  cursor: default;
+}
+.reader-figure.fig-error .figure-img,
+.reader-figure.fig-error .figure-spinner,
+.reader-figure.fig-error .fig-zoom-btn {
+  display: none !important;
+}
+.fig-fallback {
+  display: none;
+}
+.reader-figure.fig-error .fig-fallback {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink3);
+  font-size: 12px;
+  font-style: italic;
+}
+.figure-caption {
+  padding: 12px 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink2);
+  background: var(--surf);
+  border-top: var(--sp1);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.fig-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* Lightbox Modal */
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.img-lightbox[hidden] {
+  display: none !important;
+}
+.lb-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 12, 10, 0.88);
+  backdrop-filter: blur(8px);
+}
+.lb-dialog {
+  position: relative;
+  z-index: 2;
+  max-width: 90vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surf);
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.lb-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: var(--sp1);
+  background: var(--surf2);
+}
+.lb-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.lb-close {
+  background: none;
+  border: none;
+  color: var(--ink2);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lb-close:hover {
+  color: var(--ink);
+  background: var(--surfH);
+}
+.lb-canvas {
+  flex: 1;
+  min-height: 200px;
+  max-height: 72vh;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111111;
+  padding: 16px;
+}
+.lb-img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  background: #ffffff;
+}
+.lb-caption {
+  padding: 12px 18px;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.45;
+  background: var(--surf);
+  border-top: var(--sp1);
+  max-height: 100px;
+  overflow-y: auto;
+}
+
 </style>
 </head>
 
@@ -2089,6 +2469,46 @@ const Coll = {
     return IA.search(Object.assign({ coll: c.q, page: page || 1, sort: sort || "popular", rows: 30 }, extra || {}));
   },
 };
+const COUNTRIES = [
+  { code: "np", name: "Nepal", native: "नेपाल", lang: "Nepali", query: "Nepal folklore OR Himalaya OR Nepali", blurb: "Himalayan travel chronicles, Buddhist manuscripts and Nepali folk tales.", tag: "Himalayan Stacks" },
+  { code: "us", name: "United States", native: "United States", lang: "English", query: "American literature OR Mark Twain OR Edgar Allan Poe OR Herman Melville", blurb: "American Renaissance, gothic fiction, frontier chronicles and transcendentalist essays.", tag: "Classics" },
+  { code: "gb", name: "United Kingdom", native: "Great Britain", lang: "English", query: "Jane Austen OR Charles Dickens OR Arthur Conan Doyle OR William Shakespeare", blurb: "Victorian mysteries, Elizabethan drama, romantic verse and gothic horror.", tag: "Heritage" },
+  { code: "fr", name: "France", native: "France", lang: "French", query: "Victor Hugo OR Alexandre Dumas OR Jules Verne OR Voltaire OR Marcel Proust", blurb: "Enlightenment philosophy, Parisian romances, adventures and French verse.", tag: "Classics" },
+  { code: "de", name: "Germany", native: "Deutschland", lang: "German", query: "Johann Wolfgang von Goethe OR Franz Kafka OR Friedrich Nietzsche OR Brothers Grimm", blurb: "Folk fairy tales, Weimar classicism, existential philosophy and modernist parables.", tag: "Thought" },
+  { code: "jp", name: "Japan", native: "日本", lang: "Japanese", query: "Natsume Soseki OR Ryunosuke Akutagawa OR Hokusai Manga OR Basho OR Genji", blurb: "Meiji-era novels, classical haiku, folk legends and historic Edo manga plates.", tag: "Illustrated" },
+  { code: "in", name: "India", native: "भारत", lang: "Hindi / Sanskrit", query: "Rabindranath Tagore OR Mahabharata OR Upanishads OR Panchatantra OR Kalidasa", blurb: "Nobel laureate Tagore's works, Vedic philosophy, Sanskrit epics and Panchatantra fables.", tag: "Heritage" },
+  { code: "es", name: "Spain", native: "España", lang: "Spanish", query: "Miguel de Cervantes OR Don Quixote OR Federico Garcia Lorca OR Calderon", blurb: "Golden Age masterpieces, Don Quixote chivalric satire and Andalusian lyric poetry.", tag: "Classics" },
+  { code: "it", name: "Italy", native: "Italia", lang: "Italian", query: "Dante Alighieri OR Divine Comedy OR Giovanni Boccaccio OR Niccolo Machiavelli", blurb: "The Divine Comedy, Renaissance political treatises and Venetian novellas.", tag: "Classics" },
+  { code: "br", name: "Brazil", native: "Brasil", lang: "Portuguese", query: "Machado de Assis OR Brazilian literature OR Jose de Alencar", blurb: "Ironic 19th-century realism, Rio de Janeiro society and indigenous legends.", tag: "Americas" },
+  { code: "ru", name: "Russia", native: "Россия", lang: "Russian", query: "Leo Tolstoy OR Fyodor Dostoevsky OR Anton Chekhov OR Alexander Pushkin", blurb: "Monumental psychological epics, Petersburg novellas and pastoral dramas.", tag: "Classics" },
+  { code: "cn", name: "China", native: "中国", lang: "Chinese", query: "Sun Tzu Art of War OR Confucius Analects OR Journey to the West OR Tang Poetry", blurb: "Ancient military strategy, Confucian philosophy and Ming dynasty vernacular epics.", tag: "Classics" },
+  { code: "gr", name: "Greece", native: "Ελλάδα", lang: "Greek", query: "Homer Iliad Odyssey OR Plato Dialogues OR Aristotle OR Sophocles", blurb: "Epic poetry of Troy and Odysseus, Socratic dialogues and Athenian tragedies.", tag: "Ancient" },
+  { code: "eg", name: "Egypt", native: "مصر", lang: "Arabic / Egyptian", query: "Book of the Dead OR Egyptian mythology OR Alexandria OR Egyptian tales", blurb: "Papyrus funerary texts, tales of the pharaohs and medieval Cairene chronicles.", tag: "Ancient" },
+  { code: "ie", name: "Ireland", native: "Éire", lang: "English / Irish", query: "James Joyce OR Oscar Wilde OR Bram Stoker OR W. B. Yeats", blurb: "Dublin modernism, Celtic revival poetry, Victorian wit and gothic vampire lore.", tag: "Heritage" },
+  { code: "mx", name: "Mexico", native: "México", lang: "Spanish / Nahuatl", query: "Mexican folklore OR Sor Juana Ines de la Cruz OR Aztec tales", blurb: "Baroque colonial poetry, Mesoamerican myths and revolutionary folk ballads.", tag: "Americas" },
+  { code: "kr", name: "South Korea", native: "대한민국", lang: "Korean", query: "Korean folk tales OR Chunhyang OR Korean literature", blurb: "Joseon dynasty legends, folk tales, pansori narratives and historical chronicles.", tag: "Asia" },
+  { code: "nl", name: "Netherlands", native: "Nederland", lang: "Dutch", query: "Baruch Spinoza OR Dutch literature OR Multatuli", blurb: "Enlightenment ethics, maritime travelogues and colonial satiric fiction.", tag: "Europe" },
+  { code: "se", name: "Sweden", native: "Sverige", lang: "Swedish", query: "Selma Lagerlof OR August Strindberg OR Swedish fairy tales", blurb: "Nobel laureate folklore tales, Nordic psychological drama and Scandinavian myths.", tag: "Nordic" },
+  { code: "no", name: "Norway", native: "Norge", lang: "Norwegian", query: "Henrik Ibsen OR Norse sagas OR Knut Hamsun OR Asbjornsen", blurb: "Pioneering modern stage dramas, Viking sagas and Norwegian troll legends.", tag: "Nordic" },
+  { code: "dk", name: "Denmark", native: "Danmark", lang: "Danish", query: "Hans Christian Andersen fairy tales OR Soren Kierkegaard", blurb: "Beloved fairy tales of Andersen and father of existentialism Kierkegaard.", tag: "Nordic" },
+  { code: "pl", name: "Poland", native: "Polska", lang: "Polish", query: "Henryk Sienkiewicz Quo Vadis OR Adam Mickiewicz OR Boleslaw Prus", blurb: "Nobel laureate historical epics, Romantic Polish verse and Positivist realism.", tag: "Europe" },
+  { code: "ca", name: "Canada", native: "Canada", lang: "English / French", query: "Lucy Maud Montgomery OR Anne of Green Gables OR Canadian folklore", blurb: "Prince Edward Island pastoral fiction, wilderness narratives and First Nations lore.", tag: "Americas" },
+  { code: "au", name: "Australia", native: "Australia", lang: "English", query: "Henry Lawson OR Banjo Paterson OR Australian bush ballads", blurb: "Bush poetry, outback pioneer memoirs and colonial adventure yarns.", tag: "Pacific" }
+];
+
+const SUBJECTS = [
+  { id: "fiction", name: "Romance & Fiction", icon: "book", count: "10,000+", query: "subject:fiction OR subject:literature OR subject:romance", blurb: "Beloved novels, social satires, drama and enduring romances.", tint: "" },
+  { id: "scifi", name: "Science Fiction & Fantasy", icon: "compass", count: "4,500+", query: "subject:\"science fiction\" OR subject:fantasy OR subject:speculative", blurb: "Journeys to Mars, time travel, cosmic mysteries and utopian visions.", tint: "t-science" },
+  { id: "mystery", name: "Mystery & Detective", icon: "key", count: "3,200+", query: "subject:detective OR subject:mystery OR subject:crime", blurb: "Locked rooms, foggy London alleys, missing heirs and patient sleuths.", tint: "" },
+  { id: "science", name: "Science & Nature", icon: "flask", count: "6,000+", query: "subject:science OR subject:biology OR subject:astronomy OR subject:evolution", blurb: "Landmark treatises, Darwin's voyages, relativity and field observations.", tint: "t-science" },
+  { id: "philosophy", name: "Philosophy & Ethics", icon: "columns", count: "5,100+", query: "subject:philosophy OR subject:ethics OR subject:logic", blurb: "Dialogues on justice, virtue, human nature and epistemology.", tint: "" },
+  { id: "history", name: "History & Biography", icon: "landmark", count: "8,800+", query: "subject:history OR subject:biography OR subject:memoir", blurb: "Ancient chronicles, wartime diaries and memoirs in the writers' own words.", tint: "t-heritage" },
+  { id: "children", name: "Children's & Fairy Tales", icon: "star", count: "5,400+", query: "subject:\"fairy tales\" OR subject:\"children\'s literature\" OR subject:fables", blurb: "Grimm fables, Andersen stories, nursery rhymes and illustrated classics.", tint: "" },
+  { id: "poetry", name: "Poetry & Verse", icon: "quill", count: "4,000+", query: "subject:poetry OR subject:poems OR subject:sonnets", blurb: "Homeric epics, Shakespearean sonnets, Persian rubaiyat and Romantic lyrics.", tint: "t-art" },
+  { id: "art", name: "Art, Design & Comics", icon: "kite", count: "2,300+", query: "subject:art OR subject:comics OR subject:caricature OR subject:manga", blurb: "Edo woodblocks, vintage strip cartoons, illuminated plates and art monographs.", tint: "t-art" },
+  { id: "technology", name: "Computing & AI Papers", icon: "flask", count: "1,800+", query: "subject:\"computer science\" OR subject:algorithms OR subject:artificial", blurb: "Babbage engines, information theory, neural networks and landmark research.", tint: "t-science" }
+];
+
 const LANGUAGES = [
   { code: "eng", name: "English" }, { code: "fre", name: "French" }, { code: "ger", name: "German" },
   { code: "spa", name: "Spanish" }, { code: "ita", name: "Italian" }, { code: "por", name: "Portuguese" },
@@ -2733,6 +3153,51 @@ Views.home = async function (main) {
         </div>
       </section>
 
+      <section class="section">
+        <div class="section-head">
+          <h2>Browse by Subject</h2>
+          <span class="sub">Explore genres and disciplines across the open stacks</span>
+          <a class="more" href="#/collections">All subjects ${ic("arrowR", 14)}</a>
+        </div>
+        <div class="ornament">${ic("ornament", 15)}</div>
+        <div class="subject-grid">
+          ${SUBJECTS.map(s => `
+            <a class="subject-card ${s.tint}" href="#/discover?q=${encodeURIComponent(s.query)}">
+              <div class="top"><span class="subject-icon">${ic(s.icon, 20)}</span><h3>${U.esc(s.name)}</h3></div>
+              <div class="blurb">${U.esc(s.blurb)}</div>
+              <div class="foot"><span>${s.count} volumes</span><span class="arrow">${ic("arrowR", 15)}</span></div>
+            </a>`).join("")}
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Literature from Around the World</h2>
+          <span class="sub">Discover open books by nation — real archival editions from every continent</span>
+          <a class="more" href="#/collections/countries">All 24 nations ${ic("arrowR", 14)}</a>
+        </div>
+        <div class="ornament">${ic("ornament", 15)}</div>
+        <div class="country-grid">
+          ${COUNTRIES.slice(0, 8).map(c => `
+            <a class="country-card" href="#/discover?q=${encodeURIComponent(c.query)}">
+              <div class="country-card-header">
+                <div class="country-flag-wrap">
+                  <img src="/flags/${c.code}.svg" class="country-flag" alt="${U.esc(c.name)} flag" loading="lazy">
+                </div>
+                <div class="country-card-title">
+                  <span class="country-name">${U.esc(c.name)}</span>
+                  <span class="country-native">${U.esc(c.native)} · ${U.esc(c.lang)}</span>
+                </div>
+              </div>
+              <div class="country-blurb">${U.esc(c.blurb)}</div>
+              <div class="country-foot">
+                <span class="country-tag">${U.esc(c.tag)}</span>
+                <span style="display:flex;align-items:center;gap:4px">Explore ${ic("arrowR", 13)}</span>
+              </div>
+            </a>`).join("")}
+        </div>
+      </section>
+
       ${Comps.shelfSection("fresh", "Newly catalogued", "Recent arrivals to these shelves — verified and shelved", "#/collections")}
       ${HOME_SHELVES.map(id => {
         const sh = SHELVES.find(x => x.id === id);
@@ -2799,7 +3264,12 @@ Views.collections = async function (main, { sub, params }) {
     const fake = { id: "lang:" + code, name: L.name + " Collection", blurb: "Every open volume catalogued in " + L.name + ".", icon: "globe", tint: "", q: "language:(" + code + ")" };
     return viewCollectionImpl(main, fake, params, "lang/" + code);
   }
-  if (sub[0] === "lang") return viewsLang(main);
+  if (sub[0] === "country" && sub[1]) {
+    const country = COUNTRIES.find(c => c.code === sub[1]) || { code: sub[1], name: sub[1], query: sub[1], blurb: "" };
+    const fake = { id: "country:" + country.code, name: country.name + " Literature", blurb: country.blurb || ("Open literature from " + country.name), icon: "globe", tint: "", q: country.query };
+    return viewCollectionImpl(main, fake, params, "country/" + country.code);
+  }
+  if (sub[0] === "countries" || sub[0] === "lang") return viewsCountriesAndLang(main);
   if (sub[0]) { const c = Coll.byId(sub[0]); if (!c) return Views.home(main, { sub: [], params }); return viewCollectionImpl(main, c, params, sub[0]); }
   return collectionsIndex(main);
 };
@@ -2830,8 +3300,13 @@ async function collectionsIndex(main) {
             <div class="blurb">${U.esc(c.blurb)}</div>
             <div class="foot"><span class="qa-count" data-count="${c.id}">${ic("refresh", 12)} counting…</span><span class="arrow">${ic("arrowR", 17)}</span></div>
           </a>`).join("")}
+        <a class="qa-card" href="#/collections/countries">
+          <div class="top"><span class="qa-seal">${ic("globe", 21)}</span><h3>Around the World</h3></div>
+          <div class="blurb">Browse literature by country with official flags — 24 nations included.</div>
+          <div class="foot"><span class="qa-count">24 nations</span><span class="arrow">${ic("arrowR", 17)}</span></div>
+        </a>
         <a class="qa-card" href="#/collections/lang">
-          <div class="top"><span class="qa-seal">${ic("globe", 21)}</span><h3>World Languages</h3></div>
+          <div class="top"><span class="qa-seal">${ic("openbook", 21)}</span><h3>World Languages</h3></div>
           <div class="blurb">Browse the stacks in your language — from French to Sanskrit.</div>
           <div class="foot"><span class="qa-count">many tongues</span><span class="arrow">${ic("arrowR", 17)}</span></div>
         </a>
@@ -2952,19 +3427,54 @@ Views.shelf = async function (main, { sub }) {
   Comps.bindCards(main);
 };
 
-async function viewsLang(main) {
+async function viewsCountriesAndLang(main) {
   main.innerHTML = `
   <div class="view"><div class="container">
     <div class="coll-view-head">
       <span class="qa-seal">${ic("globe", 24)}</span>
-      <div class="grow"><h1>World Languages</h1><div class="sub">The open stacks hold volumes in dozens of languages — pick a tongue and browse.</div></div>
+      <div class="grow">
+        <h1>Literature from Around the World</h1>
+        <div class="sub">Explore open literature, folk tales and landmark classics from 24 nations with verified flag editions.</div>
+      </div>
       <a class="btn ghost" href="#/collections">${ic("chevL", 16)} All collections</a>
+    </div>
+    <div class="ornament">${ic("ornament", 15)}</div>
+
+    <section class="section" style="margin-top:0">
+      <div class="country-grid">
+        ${COUNTRIES.map(c => `
+          <a class="country-card" href="#/discover?q=${encodeURIComponent(c.query)}">
+            <div class="country-card-header">
+              <div class="country-flag-wrap">
+                <img src="/flags/${c.code}.svg" class="country-flag" alt="${U.esc(c.name)} flag" loading="lazy">
+              </div>
+              <div class="country-card-title">
+                <span class="country-name">${U.esc(c.name)}</span>
+                <span class="country-native">${U.esc(c.native)} · ${U.esc(c.lang)}</span>
+              </div>
+            </div>
+            <div class="country-blurb">${U.esc(c.blurb)}</div>
+            <div class="country-foot">
+              <span class="country-tag">${U.esc(c.tag)}</span>
+              <span style="display:flex;align-items:center;gap:4px">Read volumes ${ic("arrowR", 13)}</span>
+            </div>
+          </a>`).join("")}
+      </div>
+    </section>
+
+    <div class="coll-view-head" style="margin-top:40px">
+      <span class="qa-seal">${ic("openbook", 24)}</span>
+      <div class="grow">
+        <h2>World Languages & Transcriptions</h2>
+        <div class="sub">The open stacks hold volumes in dozens of languages — pick a tongue and browse.</div>
+      </div>
     </div>
     <div class="ornament">${ic("ornament", 15)}</div>
     <div class="lang-grid">
       ${LANGUAGES.map(l => `<a class="lang-card" href="#/collections/lang/${l.code}">${ic("openbook", 18)}<span class="nm">${l.name}</span><span class="ct" data-lc="${l.code}">…</span></a>`).join("")}
     </div>
   </div></div>`;
+
   /* language counts, only for cards scrolled into view */
   const lio = new IntersectionObserver((ents, obs) => {
     ents.forEach(en => {
@@ -2977,6 +3487,7 @@ async function viewsLang(main) {
   U.$$('[data-lc]', main).forEach(el => lio.observe(el));
   App.onTeardown(() => lio.disconnect());
 }
+const viewsLang = viewsCountriesAndLang;
 </script>
 
 <script>
@@ -4141,6 +4652,40 @@ Views.read = async function (main, { sub }) {
    TEXT RENDERER · txt / ocr / html / markdown / transcriptions / articles
    includes the cleanup engine for garbled text
    ============================================================ */
+function openImageLightbox(src, caption) {
+  let lb = document.getElementById("img-lightbox");
+  if (!lb) {
+    lb = document.createElement("div");
+    lb.id = "img-lightbox";
+    lb.className = "img-lightbox";
+    lb.innerHTML = `
+      <div class="lb-backdrop"></div>
+      <div class="lb-dialog">
+        <div class="lb-top">
+          <span class="lb-badge">Historical Illustration</span>
+          <button type="button" class="lb-close" aria-label="Close" title="Close (Esc)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="lb-canvas">
+          <img src="" alt="" class="lb-img">
+        </div>
+        <div class="lb-caption"></div>
+      </div>`;
+    document.body.appendChild(lb);
+    const close = () => { lb.hidden = true; document.removeEventListener("keydown", onKey); };
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    lb.querySelector(".lb-close").addEventListener("click", close);
+    lb.querySelector(".lb-backdrop").addEventListener("click", close);
+    lb._close = close;
+    lb._onKey = onKey;
+  }
+  lb.querySelector(".lb-img").src = src;
+  lb.querySelector(".lb-caption").textContent = caption || "";
+  lb.hidden = false;
+  document.addEventListener("keydown", lb._onKey);
+}
+
 function cleanPlainText(raw) {
   let t = String(raw || "");
   t = t.replace(/\r\n?/g, "\n");
@@ -4201,7 +4746,18 @@ function sanitizeFragment(html, opts) {
       attrs.forEach(a => {
         let v = n.getAttribute(a);
         if (v == null) return;
-        if (a === "src") { const u = Net.safeUrl(v); if (!u) return; v = u; el.setAttribute("loading", "lazy"); el.setAttribute("referrerpolicy", "no-referrer"); }
+        if (a === "src") {
+          let resolved = v;
+          if (opts.baseUrl && !/^https?:\/\//i.test(v)) {
+            try { resolved = new URL(v, opts.baseUrl).toString(); } catch(e) {}
+          }
+          const u = Net.safeUrl(resolved);
+          if (!u) return;
+          v = u;
+          el.setAttribute("loading", "lazy");
+          el.setAttribute("referrerpolicy", "no-referrer");
+          el.className = (el.className ? el.className + " " : "") + "figure-img";
+        }
         if (a === "id" && !/^[A-Za-z][\w\-.:]{0,80}$/.test(v)) return;
         el.setAttribute(a, v);
       });
@@ -4359,6 +4915,21 @@ class TextRenderer {
     }
     /* scroll → progress */
     this.scroller.addEventListener("scroll", U.debounce(() => this.emitProgress(), 120), { passive: true });
+    /* illustration zoom popup */
+    this.article.addEventListener("click", e => {
+      const figBtn = e.target.closest(".fig-zoom-btn");
+      const figFrame = e.target.closest(".figure-frame");
+      const img = e.target.closest("img");
+      if (figBtn || figFrame || img) {
+        const figure = e.target.closest(".reader-figure");
+        const targetImg = figure ? figure.querySelector(".figure-img") : (img || (figFrame && figFrame.querySelector("img")));
+        if (targetImg && targetImg.src && !figure?.classList.contains("fig-error")) {
+          const cap = figure ? (figure.querySelector(".figure-caption span:not(.fig-badge)")?.textContent || targetImg.alt) : (targetImg.alt || "Illustration");
+          openImageLightbox(targetImg.src, cap);
+        }
+      }
+    });
+
     /* selection popup */
     this.scroller.addEventListener("mouseup", e => {
       const sel = window.getSelection();
@@ -4447,9 +5018,101 @@ class TextRenderer {
     const frag = document.createDocumentFragment();
     const parts = txt.split(/\n{2,}/);
     let hcount = 0;
+
+    // Resolve book identifier and Gutenberg ID for image resolution
+    const docId = (this.doc && this.doc.id) || "";
+    const ident = (this.strategy && this.strategy.ident) || (this.doc && this.doc.read && this.doc.read.identifier) || "";
+    let pgNum = "";
+    if (docId.startsWith("pg:")) pgNum = docId.slice(3);
+    else if (ident) {
+      const mGut = ident.match(/(\d+)gut$/);
+      if (mGut) pgNum = mGut[1];
+    }
+    if (!pgNum && this.strategy && this.strategy.url) {
+      const mUrl = this.strategy.url.match(/\/(\d+)(?:-h|\.txt)/);
+      if (mUrl) pgNum = mUrl[1];
+    }
+
+    const makeFigure = (token) => {
+      const match = token.match(/\[Illustration(?::\s*([\s\S]*?))?\]/i);
+      const cap = (match && match[1] ? match[1].replace(/\s+/g, " ").trim() : "Historical illustration");
+      const figEl = document.createElement("figure");
+      figEl.className = "reader-figure";
+
+      let primaryUrl = "";
+      let fallbackUrl = "";
+
+      const figMatch = cap.match(/(?:fig(?:ure|\.)?|plate)\s*(\d+[a-z]?|[ivxlcdm]+)\b/i);
+      const fileMatch = cap.match(/([a-zA-Z0-9_\-]+\.(?:png|jpg|jpeg|gif))/i);
+
+      if (ident && pgNum && figMatch) {
+        const num = figMatch[1].toLowerCase();
+        primaryUrl = "https://archive.org/download/" + encodeURIComponent(ident) + "/" + encodeURIComponent(pgNum) + "-h/images/fig" + num + ".png";
+        fallbackUrl = "https://archive.org/download/" + encodeURIComponent(ident) + "/" + encodeURIComponent(pgNum) + "-h/images/fig" + num + ".jpg";
+      } else if (ident && pgNum && fileMatch) {
+        primaryUrl = "https://archive.org/download/" + encodeURIComponent(ident) + "/" + encodeURIComponent(pgNum) + "-h/images/" + fileMatch[1];
+        fallbackUrl = "https://www.gutenberg.org/files/" + encodeURIComponent(pgNum) + "/" + encodeURIComponent(pgNum) + "-h/images/" + fileMatch[1];
+      } else if (ident && figMatch) {
+        const num = figMatch[1].toLowerCase();
+        primaryUrl = "https://archive.org/download/" + encodeURIComponent(ident) + "/page/n" + num + ".jpg";
+      }
+
+      figEl.innerHTML = `
+        <div class="figure-frame" tabindex="0" role="button" aria-label="Zoom illustration">
+          <div class="figure-spinner"><span class="spinner-dot"></span> Loading illustration…</div>
+          <div class="fig-fallback">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            <span>[Historical Plate: ${U.esc(cap.slice(0, 90))}]</span>
+          </div>
+          ${primaryUrl ? `<img src="${U.esc(primaryUrl)}" alt="${U.esc(cap)}" class="figure-img" loading="lazy" data-fallback="${U.esc(fallbackUrl)}">` : ""}
+          <button type="button" class="fig-zoom-btn" title="View full image">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> Zoom
+          </button>
+        </div>
+        <figcaption class="figure-caption">
+          <span class="fig-badge">Illustration</span>
+          <span>${U.esc(cap)}</span>
+        </figcaption>`;
+
+      const img = figEl.querySelector(".figure-img");
+      if (img) {
+        img.onload = () => figEl.classList.add("fig-loaded");
+        img.onerror = function() {
+          const fb = this.getAttribute("data-fallback");
+          if (fb && this.src !== fb) {
+            this.setAttribute("data-fallback", "");
+            this.src = fb;
+          } else {
+            figEl.classList.add("fig-error");
+          }
+        };
+      } else {
+        figEl.classList.add("fig-error");
+      }
+      return figEl;
+    };
+
     parts.forEach(p => {
       p = p.trim();
       if (!p) return;
+
+      // Extract illustrations from block
+      if (/\[Illustration(?::\s*[\s\S]*?)?\]/i.test(p)) {
+        const subTokens = p.split(/(\[Illustration(?::\s*[\s\S]*?)?\])/i);
+        subTokens.forEach(tok => {
+          tok = tok.trim();
+          if (!tok) return;
+          if (/^\[Illustration/i.test(tok)) {
+            frag.appendChild(makeFigure(tok));
+          } else {
+            const para = document.createElement("p");
+            para.textContent = tok.split("\n").map(l => l.trim()).join(" ");
+            frag.appendChild(para);
+          }
+        });
+        return;
+      }
+
       const lines = p.split("\n").map(l => l.trim());
       if (lines.length <= 2 && lines.every(l => l === l.toUpperCase() && l.length > 3 && /[A-Z]/.test(l))) {
         hcount++;

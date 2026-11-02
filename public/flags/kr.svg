@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="600" height="400">
+  <rect width="900" height="600" fill="#ffffff"/>
+  <!-- Taegeuk -->
+  <path d="M450 160 A140 140 0 0 1 450 440 A140 140 0 0 1 450 300 A70 70 0 0 0 450 160 Z" fill="#CD2E3A"/>
+  <path d="M450 440 A140 140 0 0 1 450 160 A70 70 0 0 1 450 300 A70 70 0 0 0 450 440 Z" fill="#0047A0"/>
+  <!-- Four trigrams -->
+  <g fill="#000000">
+    <rect x="200" y="140" width="60" height="14" transform="rotate(35 230 147)"/>
+    <rect x="200" y="165" width="60" height="14" transform="rotate(35 230 172)"/>
+    <rect x="200" y="190" width="60" height="14" transform="rotate(35 230 197)"/>
+    <rect x="640" y="380" width="60" height="14" transform="rotate(35 670 387)"/>
+    <rect x="640" y="405" width="60" height="14" transform="rotate(35 670 412)"/>
+    <rect x="640" y="430" width="60" height="14" transform="rotate(35 670 437)"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 500" width="600" height="400">
+  <rect width="750" height="125" fill="#AA151B"/>
+  <rect y="125" width="750" height="250" fill="#F1BF00"/>
+  <rect y="375" width="750" height="125" fill="#AA151B"/>
+  <!-- Spanish Seal -->
+  <circle cx="225" cy="250" r="45" fill="#AA151B" stroke="#ffffff" stroke-width="4"/>
+  <path d="M210 230h30v35h-30z" fill="#F1BF00"/>
+</svg>
