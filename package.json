@@ -2,10 +2,12 @@
   "name": "freeread",
   "version": "1.0.0",
   "description": "A private, distraction-free reading room for the open web. Discover, read, and collect books, periodicals, and research papers entirely in your browser.",
-  "main": "index.html",
+  "main": "worker.js",
   "scripts": {
-    "dev": "wrangler pages dev .",
-    "deploy": "wrangler pages deploy ."
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "pages:dev": "wrangler pages dev .",
+    "pages:deploy": "wrangler pages deploy ."
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
     "project-gutenberg",
     "wikisource",
     "openalex",
+    "cloudflare-workers",
     "cloudflare-pages",
     "privacy-first",
     "indexeddb"
@@ -32,6 +35,6 @@
   },
   "homepage": "https://github.com/aixenon1-ctrl/freeread#readme",
   "devDependencies": {
-    "wrangler": "^3.107.0"
+    "wrangler": "^4.156.1"
   }
 }

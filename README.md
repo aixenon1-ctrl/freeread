@@ -136,6 +136,7 @@ When deployed, FreeRead utilizes an edge function to protect the client and ensu
 ```
 freeread/
 ├── index.html              # The complete reading room web application
+├── worker.js               # Cloudflare Worker entry point with static asset binding
 ├── _headers                # HTTP security headers (CSP, HSTS, X-Frame-Options)
 ├── _routes.json            # Cloudflare Pages routing configuration
 ├── wrangler.toml           # Cloudflare configuration file
