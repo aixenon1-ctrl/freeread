@@ -646,10 +646,13 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 }
 .status-pill *{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .rd-fmt-switch{
-  display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:99px;
-  font-size:12px; font-family:var(--font-sans); font-weight:500;
-  border:1px solid var(--brass); background:color-mix(in srgb, var(--brass) 12%, transparent);
-  color:var(--ink); cursor:pointer; margin:0 4px;
+  display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 12px; border-radius:99px;
+  font-size:11.5px; font-family:var(--font-sans); font-weight:600; letter-spacing:.02em;
+  border:1px solid var(--brass); background:color-mix(in srgb, var(--brass) 18%, transparent);
+  color:var(--ink); cursor:pointer; margin:0 6px; flex:none; transition:all .15s ease;
+}
+.rd-fmt-switch:hover{
+  background:var(--brass); color:var(--surf);
 }
 .rd-fmt-switch:hover{background:color-mix(in srgb, var(--brass) 25%, transparent)}
 .status-pill.s-reading{color:var(--warn); border-color:color-mix(in srgb, var(--warn) 40%, transparent); background:var(--warnbg)}
@@ -2292,8 +2295,12 @@ const IA = {
     const mirrorTxt = pg ? this.pickFile(files, f => new RegExp("^" + pg + "(-8|-0)?\\.txt$").test(f.name || "")) : null;
     const anyTxt = this.pickFile(files, f => /\.txt$/i.test(f.name || "") && !/djvu|meta|readme|license/i.test(f.name) && size(f) > 15000 && size(f) < 6500000);
     const djvuTxt = this.pickFile(files, f => /_djvu\.txt$/i.test(f.name || "") && size(f) > 20000 && size(f) < 6500000);
-    const imagecount = parseInt(meta.imagecount) || 0;
-    const scanInfo = imagecount > 1 ? { identifier, pages: imagecount } : null;
+    const hasJp2 = files.some(f => (f.format && f.format.includes("JP2")) || (f.name && f.name.endsWith("_jp2.zip")));
+    const hasPdf = files.some(f => (f.format && f.format.includes("PDF")) || (f.name && f.name.endsWith(".pdf")));
+    const hasScandata = files.some(f => f.name && f.name.endsWith("_scandata.xml"));
+    let imagecount = parseInt(meta.imagecount) || 0;
+    if (!imagecount && (hasJp2 || hasPdf || hasScandata)) imagecount = 50;
+    const scanInfo = (imagecount > 1 || hasJp2 || hasPdf || hasScandata) ? { identifier, pages: imagecount || 50 } : null;
 
     const isVisualWork = (meta.title && /comic|manga|graphic|illustration|cartoon|photo|strip|album|dofantasy/i.test(meta.title))
       || (meta.subject && [].concat(meta.subject).some(s => /comic|manga|graphic|illustration|cartoon|photo/i.test(s)))
@@ -4614,12 +4621,12 @@ const Reader = {
       return this.showError("Could not open this work", e.message || "An unexpected error occurred while fetching this document.", true);
     }
     this.doc = docRec; this.item = item;
-    this.buildShell(docRec);
-    await Store.logEvent("opened", docRec);
-    const Ctx = { onProgress: p => this.onProgress(p), showSelPop: (x, y, data) => this.showSelPop(x, y, data), onLoadStep: (m, p) => this.loadStep(m, p) };
     this.strategy = strategy;
     this.currentFormat = strategy.type;
     this.initialStrategy = Object.assign({}, strategy);
+    this.buildShell(docRec);
+    await Store.logEvent("opened", docRec);
+    const Ctx = { onProgress: p => this.onProgress(p), showSelPop: (x, y, data) => this.showSelPop(x, y, data), onLoadStep: (m, p) => this.loadStep(m, p) };
     const type = strategy.type;
     try {
       if (type === "scan") this.renderer = new ScanRenderer(docRec, strategy, Ctx);
@@ -5002,8 +5009,8 @@ const Reader = {
   },
   canSwitchFormat() {
     if (!this.strategy) return false;
-    if (this.strategy.scans && this.strategy.scans.pages > 1) return true;
-    if (this.strategy.type === "scan" && (this.strategy.ocrUrl || this.strategy.hasOcr)) return true;
+    if (this.doc && this.doc.id && this.doc.id.startsWith("ia:")) return true;
+    if (this.strategy.scans || (this.strategy.type === "scan" && (this.strategy.ocrUrl || this.strategy.hasOcr))) return true;
     return false;
   },
   wireFormatSwitch() {
