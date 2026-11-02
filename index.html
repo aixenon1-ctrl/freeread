@@ -379,7 +379,7 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .stat{display:flex; flex-direction:column; gap:2px; min-width:110px}
 .stat .v{font-family:var(--f-display); font-size:26px; font-weight:700; color:var(--ink)}
 .stat .k{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink3); font-weight:600}
-.hero-shelf{position:absolute; left:0; right:0; bottom:-2px; height:90px; opacity:.5; z-index:1; pointer-events:none; color:var(--accent)}
+.hero-shelf{position:absolute; left:0; right:0; bottom:-2px; width:100%; height:90px; opacity:.55; z-index:1; pointer-events:none; color:var(--accent); border-bottom:3px solid color-mix(in srgb, var(--accent) 70%, transparent)}
 [data-theme="night"] .hero-shelf{opacity:.35}
 .hero-quote{
   max-width:660px; margin:44px auto 0; padding:20px 26px;
@@ -640,9 +640,18 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .progress > i{display:block; height:100%; background:linear-gradient(90deg, var(--brass), var(--accent)); border-radius:3px; transition:width .4s var(--ease)}
 .doc-card .foot{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:auto}
 .status-pill{
-  display:inline-flex; align-items:center; gap:5px; height:22px; padding:0 9px; border-radius:999px;
-  font-size:11px; font-weight:600; letter-spacing:.05em; border:1px solid var(--rule2); color:var(--ink2); background:var(--surf);
+  display:inline-flex; align-items:center; gap:5px; height:24px; max-width:185px; padding:0 10px; border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:.02em; border:1px solid var(--rule2); color:var(--ink2); background:var(--surf);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+.status-pill *{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.rd-fmt-switch{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:99px;
+  font-size:12px; font-family:var(--font-sans); font-weight:500;
+  border:1px solid var(--brass); background:color-mix(in srgb, var(--brass) 12%, transparent);
+  color:var(--ink); cursor:pointer; margin:0 4px;
+}
+.rd-fmt-switch:hover{background:color-mix(in srgb, var(--brass) 25%, transparent)}
 .status-pill.s-reading{color:var(--warn); border-color:color-mix(in srgb, var(--warn) 40%, transparent); background:var(--warnbg)}
 .status-pill.s-finished{color:var(--ok); border-color:color-mix(in srgb, var(--ok) 40%, transparent); background:var(--okbg)}
 .status-pill.s-saved{color:var(--ink2)}
@@ -2286,19 +2295,34 @@ const IA = {
     const imagecount = parseInt(meta.imagecount) || 0;
     const scanInfo = imagecount > 1 ? { identifier, pages: imagecount } : null;
 
-    // Prefer fast, clean text / OCR when available: loads in 200ms instead of 15 seconds per page!
+    const isVisualWork = (meta.title && /comic|manga|graphic|illustration|cartoon|photo|strip|album|dofantasy/i.test(meta.title))
+      || (meta.subject && [].concat(meta.subject).some(s => /comic|manga|graphic|illustration|cartoon|photo/i.test(s)))
+      || (meta.collection && [].concat(meta.collection).some(c => /comic|manga/i.test(c)))
+      || /dofantasy/i.test(identifier);
+
+    // If it's a visual comic/manga/photo work and page scans exist, default to the image plate reader!
+    if (isVisualWork && imagecount > 1) {
+      return Object.assign(base, {
+        type: "scan", identifier, pages: imagecount,
+        ocrUrl: djvuTxt ? this.dlUrl(identifier, djvuTxt.name) : (anyTxt ? this.dlUrl(identifier, anyTxt.name) : null),
+        hasOcr: !!(djvuTxt || anyTxt),
+        key: "ia:" + identifier, ident: identifier, scans: scanInfo,
+      });
+    }
+
+    // Prefer fast text / OCR for prose novels, but keep scanInfo attached so user can switch anytime
     if (mirrorTxt || anyTxt) {
       const f = mirrorTxt || anyTxt;
       return Object.assign(base, {
         type: "text", url: this.dlUrl(identifier, f.name), fmt: "txt",
         fallbacks: [djvuTxt ? this.dlUrl(identifier, djvuTxt.name) : null].filter(Boolean),
-        key: "ia:" + identifier, ident: identifier, scans: scanInfo,
+        key: "ia:" + identifier, ident: identifier, scans: scanInfo, pages: imagecount,
       });
     }
     if (djvuTxt) {
       return Object.assign(base, {
         type: "text", url: this.dlUrl(identifier, djvuTxt.name), fmt: "ocr",
-        key: "ia:" + identifier, ident: identifier, scans: scanInfo,
+        key: "ia:" + identifier, ident: identifier, scans: scanInfo, pages: imagecount,
       });
     }
     if (imagecount > 1) return Object.assign(base, { type: "scan", identifier, pages: imagecount });
@@ -3223,8 +3247,8 @@ function shelfSilhouette() {
     rects += `<rect x="${x}" y="${70 - h}" width="${w}" height="${h}" rx="1.5" fill="currentColor" opacity="${0.5 + ((i * 13) % 40) / 100}"/>`;
     x += w + 5 + ((i * 3) % 6);
   });
-  rects += `<rect x="0" y="72" width="1000" height="5" fill="currentColor" opacity=".8"/><rect x="0" y="78" width="1000" height="3" fill="currentColor" opacity=".45"/>`;
-  return `<svg class="hero-shelf" viewBox="0 0 1000 84" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${rects}</svg>`;
+  rects += `<rect x="-3000" y="72" width="9000" height="5" fill="currentColor" opacity=".85"/><rect x="-3000" y="78" width="9000" height="3" fill="currentColor" opacity=".5"/>`;
+  return `<svg class="hero-shelf" viewBox="0 0 1000 84" preserveAspectRatio="none" aria-hidden="true">${rects}</svg>`;
 }
 const Views = {};
 Views.manga = async function (main) {
@@ -3457,14 +3481,20 @@ Views.home = async function (main) {
     if (!docs.length) return;
     const sec = main.querySelector("[data-continue]");
     sec.hidden = false;
-    sec.querySelector("[data-continue-grid]").innerHTML = docs.map(d => `
-      <article class="doc-card" data-open="${U.esc(d.id)}" tabindex="0" role="button">
+    sec.querySelector("[data-continue-grid]").innerHTML = docs.map(d => {
+      const rawLbl = d.progress.label || "in progress";
+      const cleanLbl = rawLbl.replace(/\s*·\s*\d+%\s*$/, "");
+      return `<article class="doc-card" data-open="${U.esc(d.id)}" tabindex="0" role="button">
         ${Comps.cover(d)}
         <div class="body"><h3>${U.esc(d.title)}</h3><div class="va">${U.esc(d.byline || d.kindLabel)}</div>
           <div class="progress"><i style="width:${Math.round((d.progress.percent || 0) * 100)}%"></i></div>
-          <div class="foot"><span class="status-pill s-reading">${ic("openbook", 12)} ${U.esc(d.progress.label || "in progress")}</span><span class="small muted" style="margin-left:auto">${Math.round((d.progress.percent || 0) * 100)}%</span></div>
+          <div class="foot">
+            <span class="status-pill s-reading" title="${U.esc(rawLbl)}">${ic("openbook", 12)} <span>${U.esc(cleanLbl)}</span></span>
+            <span class="small muted" style="margin-left:auto">${Math.round((d.progress.percent || 0) * 100)}%</span>
+          </div>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
     U.$$("[data-open]", sec).forEach(c => {
       const act = () => openReader(c.dataset.open);
       c.addEventListener("click", act); c.addEventListener("keydown", e => { if (e.key === "Enter") act(); });
@@ -4587,6 +4617,9 @@ const Reader = {
     this.buildShell(docRec);
     await Store.logEvent("opened", docRec);
     const Ctx = { onProgress: p => this.onProgress(p), showSelPop: (x, y, data) => this.showSelPop(x, y, data), onLoadStep: (m, p) => this.loadStep(m, p) };
+    this.strategy = strategy;
+    this.currentFormat = strategy.type;
+    this.initialStrategy = Object.assign({}, strategy);
     const type = strategy.type;
     try {
       if (type === "scan") this.renderer = new ScanRenderer(docRec, strategy, Ctx);
@@ -4594,6 +4627,7 @@ const Reader = {
       else if (type === "epub") this.renderer = new EpubRenderer(docRec, strategy, Ctx);
       else this.renderer = new TextRenderer(docRec, strategy, Ctx);
       await this.renderer.mount(U.$("#rd-stage"));
+      this.wireFormatSwitch();
     } catch (e) {
       console.warn("renderer error", e);
       return this.showError("The document could not be displayed", (e && e.message) || "The file may be damaged, too large, or its host did not permit browser reading.", true);
@@ -4644,6 +4678,7 @@ const Reader = {
       <header class="rd-top">
         <button class="btn icon ghost" id="rd-back" aria-label="Back to the library" title="Back (Esc)">${ic("chevL", 20)}</button>
         <div class="rt-title"><div class="t">${U.esc(doc.title)}</div><div class="loc" id="rd-loc">preparing…</div></div>
+        ${this.canSwitchFormat() ? `<button class="rd-fmt-switch" id="rd-fmt-toggle" title="Switch between Page Scan Images and Text">${this.currentFormat === "scan" ? `${ic("book", 14)} OCR Text` : `${ic("fit", 14)} Page Images`}</button>` : ""}
         <button class="btn icon ghost" id="rd-search" aria-label="Search inside" title="Search inside (/)">${ic("search", 19)}</button>
         <button class="btn icon ghost" id="rd-bm" aria-label="Bookmark this spot" title="Bookmark (B)">${ic("bookmark", 19)}</button>
         <button class="btn icon ghost" id="rd-toc" aria-label="Table of contents" title="Contents (T)">${ic("list", 19)}</button>
@@ -4964,6 +4999,46 @@ const Reader = {
     let py = U.clamp((data.y || 100) - r.top + 14, 8, r.height - 220);
     box.style.left = px + "px"; box.style.top = py + "px";
     setTimeout(() => box.querySelector("textarea").focus(), 60);
+  },
+  canSwitchFormat() {
+    if (!this.strategy) return false;
+    if (this.strategy.scans && this.strategy.scans.pages > 1) return true;
+    if (this.strategy.type === "scan" && (this.strategy.ocrUrl || this.strategy.hasOcr)) return true;
+    return false;
+  },
+  wireFormatSwitch() {
+    const btn = U.$("#rd-fmt-toggle");
+    if (btn) btn.onclick = () => this.toggleFormat();
+  },
+  async toggleFormat() {
+    if (!this.canSwitchFormat()) return;
+    const toScan = this.currentFormat !== "scan";
+    if (this.renderer && this.renderer.destroy) this.renderer.destroy();
+    const stage = U.$("#rd-stage");
+    stage.innerHTML = `<div class="rd-load" style="margin:auto"><div class="spin-ring"></div><div style="margin-top:10px">Loading ${toScan ? "digitized page scans" : "OCR text"}…</div></div>`;
+    const Ctx = { onProgress: p => this.onProgress(p), showSelPop: (x, y, data) => this.showSelPop(x, y, data), onLoadStep: (m, p) => this.loadStep(m, p) };
+    
+    try {
+      if (toScan) {
+        this.currentFormat = "scan";
+        const ident = this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier);
+        const pages = (this.strategy.scans && this.strategy.scans.pages) || this.strategy.pages || 50;
+        this.renderer = new ScanRenderer(this.doc, { type: "scan", identifier: ident, pages }, Ctx);
+        await this.renderer.mount(stage);
+        Toast.show("Switched to Digitized Page Reader (Manga / Webtoon)");
+      } else {
+        this.currentFormat = "text";
+        const ocrUrl = this.strategy.ocrUrl || (this.strategy.url) || ("https://archive.org/download/" + (this.strategy.ident || this.strategy.identifier) + "/" + (this.strategy.ident || this.strategy.identifier) + "_djvu.txt");
+        const textStrat = { type: "text", url: ocrUrl, fmt: "ocr", key: this.doc.id, ident: this.strategy.ident || this.strategy.identifier };
+        this.renderer = new TextRenderer(this.doc, textStrat, Ctx);
+        await this.renderer.mount(stage);
+        Toast.show("Switched to Clean Text / OCR Reader");
+      }
+      this.buildShell(this.doc);
+      this.wireFormatSwitch();
+    } catch (e) {
+      Toast.show("Could not switch reading format: " + (e.message || "format unavailable"));
+    }
   },
   showError(title, msg, canRetry) {
     this._stopLoadUI();
