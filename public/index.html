@@ -2657,6 +2657,7 @@ const SHELVES = [
   { id: "beloved", name: "The classics shelf", blurb: "The most-read novels of the open stacks — every one verified to open here.", icon: "book", tint: "" },
   { id: "wonder", name: "Worlds of wonder", blurb: "Science fiction, fantasy and strange futures from the golden age.", icon: "compass", tint: "" },
   { id: "machines", name: "Machines that think", blurb: "Landmark papers of modern AI beside the memoir of the first computer designer.", icon: "flask", tint: "t-science" },
+  { id: "comics", name: "Manga & Graphic Art", blurb: "Japanese manga, Hokusai Manga plates, golden-age comics and graphic narratives.", icon: "kite", tint: "t-art" },
   { id: "manga", name: "Manga & Graphic Art", blurb: "Japanese manga, Hokusai Manga plates, golden-age comics and graphic narratives.", icon: "kite", tint: "t-art" },
   { id: "nepal", name: "नेपाली डिजिटल पुस्तकालय", blurb: "नेपाली साहित्यका कालजयी कृतिहरू — मुनामदन, भानुभक्तीय रामायण, शाकुन्तल महाकाव्य तथा ऐतिहासिक दस्तावेजहरू।", icon: "book", tint: "t-heritage" },
   { id: "detective", name: "Detective & mystery", blurb: "Locked rooms, foggy streets and very patient sleuths.", icon: "key", tint: "" },
@@ -3257,13 +3258,17 @@ Views.manga = async function (main) {
       </div>
     </div>
 
-    <section class="section">
+    <section class="section" data-shelf="manga">
       <div class="section-head">
         <h2>Curated Manga Masterpieces</h2>
         <span class="sub">Foundational works of Japanese manga and graphic storytelling</span>
+        <a class="more" href="#/shelf/comics">View shelf ${ic("arrowR", 14)}</a>
       </div>
-      <div class="ornament">${ic("ornament", 15)}</div>
-      <div class="strip" data-manga-curated></div>
+      <div class="shelf">
+        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+        <div class="shelf-strip" data-strip data-manga-curated>${Comps.skCards(8)}</div>
+        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
+      </div>
     </section>
 
     <section class="section">
@@ -3272,9 +3277,10 @@ Views.manga = async function (main) {
         <span class="sub">100,000+ comic albums and manga volumes from the open archive</span>
         <a class="more" href="#/discover?q=${encodeURIComponent('subject:manga OR collection:comics')}">Search all comics ${ic("arrowR", 14)}</a>
       </div>
-      <div class="ornament">${ic("ornament", 15)}</div>
-      <div class="strip" data-manga-live>
-        <div style="padding:20px;color:var(--ink3)">Loading open manga editions…</div>
+      <div class="shelf">
+        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+        <div class="shelf-strip" data-strip data-manga-live>${Comps.skCards(8)}</div>
+        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
       </div>
     </section>
   </div></div>`;
@@ -3368,10 +3374,10 @@ Views.home = async function (main) {
           <button class="live-tab" data-feed="math">🔬 Mathematics & Papers <span class="tab-badge">MathJax</span></button>
           <button class="live-tab" data-feed="classics">🏛️ World Classics <span class="tab-badge">Verified</span></button>
         </div>
-        <div class="shelf-wrap" style="min-height:240px">
-          <div class="strip" data-live-strip>
-            <div style="padding:40px;color:var(--ink3);display:flex;align-items:center;gap:10px">${ic("refresh", 16)} Loading books live from Internet Archive…</div>
-          </div>
+        <div class="shelf">
+          <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+          <div class="shelf-strip" data-strip data-live-strip>${Comps.skCards(8)}</div>
+          <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
         </div>
       </section>
 
@@ -3423,6 +3429,7 @@ Views.home = async function (main) {
       ${Comps.shelfSection("fresh", "Newly catalogued", "Recent arrivals to these shelves — verified and shelved", "#/collections")}
       ${HOME_SHELVES.map(id => {
         const sh = SHELVES.find(x => x.id === id);
+        if (!sh) return "";
         return Comps.shelfSection(id, sh.name, sh.blurb, "#/shelf/" + id);
       }).join("")}
 
@@ -3697,12 +3704,17 @@ async function viewsNepal(main) {
     </div>
     <div class="ornament">${ic("ornament", 15)}</div>
 
-    <section class="section">
+    <section class="section" data-shelf="nepal">
       <div class="section-head">
         <h2>कालजयी नेपाली कृतिहरू (Verified Classics)</h2>
         <span class="sub">FreeRead मा तुरुन्त पढ्न सकिने आधिकारिक नेपाली पुस्तकहरू</span>
+        <a class="more" href="#/shelf/nepal">पुरा सूची ${ic("arrowR", 14)}</a>
       </div>
-      <div class="strip" data-nepal-curated></div>
+      <div class="shelf">
+        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+        <div class="shelf-strip" data-strip data-nepal-curated>${Comps.skCards(8)}</div>
+        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
+      </div>
     </section>
 
     <section class="section">
@@ -3711,9 +3723,10 @@ async function viewsNepal(main) {
         <span class="sub">Live stream of digitized books in Nepali language</span>
         <a class="more" href="#/discover?q=${encodeURIComponent('language:(nepali OR nep) OR subject:nepal')}">खोज्नुहोस् ${ic("arrowR", 14)}</a>
       </div>
-      <div class="ornament">${ic("ornament", 15)}</div>
-      <div class="strip" data-nepal-live>
-        <div style="padding:24px;color:var(--ink3)">Loading Nepali volumes…</div>
+      <div class="shelf">
+        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
+        <div class="shelf-strip" data-strip data-nepal-live>${Comps.skCards(8)}</div>
+        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
       </div>
     </section>
 
