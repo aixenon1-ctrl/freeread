@@ -2352,6 +2352,36 @@ const IA = {
   async meta(identifier) {
     return Net.cachedJson(this.BASE + "/metadata/" + encodeURIComponent(identifier), 7 * 24 * 60 * 60 * 1000);
   },
+  async findScannedEdition(title, author) {
+    if (!title) return null;
+    const cleanTitle = title.replace(/\([^)]*\)/g, "").replace(/\[[^\]]*\]/g, "").replace(/[:;—\-].*$/, "").trim();
+    const cacheKey = "scanfind:" + cleanTitle.toLowerCase();
+    try {
+      const hit = await DB.get("cache", cacheKey);
+      if (hit && Date.now() - hit.t < 14 * 864e5) return hit.v;
+    } catch (e) {}
+
+    let q = `title:("${cleanTitle}") AND mediatype:texts AND (scandata OR jp2) AND -collection:(gutenberg)`;
+    if (author) {
+      const authClean = author.split(",")[0].split("&")[0].trim();
+      if (authClean && authClean.length > 2) q += ` AND (creator:("${authClean}") OR "${authClean}")`;
+    }
+    const url = `${this.BASE}/advancedsearch.php?q=${encodeURIComponent(q)}&fl[]=identifier,title,imagecount,downloads&sort[]=downloads+desc&rows=6&output=json`;
+    try {
+      const j = await Net.cachedJson(url, 7 * 864e5);
+      const docs = (j && j.response && j.response.docs) || [];
+      const best = docs.find(d => (parseInt(d.imagecount, 10) || 0) > 15) || docs[0];
+      if (best && best.identifier) {
+        const pages = parseInt(best.imagecount, 10) || 250;
+        const result = { identifier: best.identifier, pages, title: best.title };
+        try { await DB.put("cache", { k: cacheKey, t: Date.now(), v: result }); } catch (e) {}
+        return result;
+      }
+    } catch (e) {
+      console.warn("findScannedEdition error:", e);
+    }
+    return null;
+  },
   dlUrl(identifier, name) { return this.BASE + "/download/" + encodeURIComponent(identifier) + "/" + encodeURIComponent(name); },
   textStrategy(c) { return Curated.textStrategy(c); },
   pageImg(identifier, n, w) {
@@ -4050,18 +4080,73 @@ async function viewCollectionImpl(main, c, params, routeBase) {
 Views.shelf = async function (main, { sub }) {
   const sh = SHELVES.find(x => x.id === sub[0]);
   if (!sh) { Router.go("#/collections"); return; }
-  const items = Curated.byShelf(sh.id).map(c => Curated.item(c));
-  CardRegistry.put(items);
+  const curated = Curated.byShelf(sh.id).map(c => Curated.item(c));
+  CardRegistry.put(curated);
   main.innerHTML = `<div class="view"><div class="container">
     <div class="coll-view-head">
       <span class="qa-seal ${sh.tint || ""}">${ic(sh.icon, 24)}</span>
-      <div class="grow"><h1>${U.esc(sh.name)}</h1><div class="sub">${U.esc(sh.blurb)} · ${items.length} volumes, all verified to open here</div></div>
+      <div class="grow">
+        <h1>${U.esc(sh.name)}</h1>
+        <div class="sub">${U.esc(sh.blurb)} · Verified editions with instant reading</div>
+      </div>
       <a class="btn ghost" href="#/collections">${ic("chevL", 16)} All collections</a>
     </div>
     <div class="ornament">${ic("ornament", 15)}</div>
-    <div class="vol-grid" style="grid-template-columns:repeat(auto-fill,minmax(164px,1fr))">${items.map(it => Comps.volCard(it)).join("")}</div>
+    <div class="vol-grid" data-shelf-grid style="grid-template-columns:repeat(auto-fill,minmax(164px,1fr))">
+      ${curated.map(it => Comps.volCard(it)).join("")}
+    </div>
+    <div class="load-more-wrap" data-shelf-more style="margin-top:28px;text-align:center">
+      <button class="btn primary" id="shelf-load-more" style="padding:10px 24px;font-size:14px">
+        ${ic("chevD", 16)} Load more ${U.esc(sh.name)}
+      </button>
+    </div>
   </div></div>`;
   Comps.bindCards(main);
+
+  const grid = main.querySelector("[data-shelf-grid]");
+  const moreBtn = main.querySelector("#shelf-load-more");
+  let page = 1, busy = false;
+
+  const loadMore = async () => {
+    if (busy) return;
+    busy = true;
+    moreBtn.innerHTML = `<span class="spin"></span> Loading more volumes…`;
+    page++;
+    try {
+      let items = [];
+      if (sh.id === "beloved") {
+        items = await PG.popular(20, page);
+      } else {
+        const queryMap = {
+          detective: "subject:(mystery OR detective OR crime)",
+          wonder: "subject:(science fiction OR fantasy OR adventure)",
+          machines: "subject:(technology OR computing OR engineering)",
+          verse: "subject:(poetry OR poems)",
+          storytime: "subject:(children OR fairy tales)",
+          philosophy: "subject:(philosophy OR ethics)",
+          history: "subject:(history OR historical)",
+          science: "subject:(science OR physics OR biology)",
+          nature: "subject:(nature OR natural history)"
+        };
+        const q = queryMap[sh.id] || `subject:(${sh.id})`;
+        const res = await IA.search({ q: `${q} AND mediatype:texts`, sort: "popular", rows: 20, page });
+        items = res.items || [];
+      }
+      if (items && items.length) {
+        CardRegistry.put(items);
+        grid.insertAdjacentHTML("beforeend", items.map(it => Comps.volCard(it)).join(""));
+        Comps.bindCards(grid);
+        moreBtn.innerHTML = `${ic("chevD", 16)} Load more ${U.esc(sh.name)}`;
+      } else {
+        moreBtn.parentElement.innerHTML = `<span class="small muted">All available volumes on this shelf loaded.</span>`;
+      }
+    } catch (e) {
+      moreBtn.innerHTML = `${ic("alert", 14)} Retry loading`;
+    }
+    busy = false;
+  };
+
+  moreBtn.addEventListener("click", loadMore);
 };
 
 async function viewsNepal(main) {
@@ -4347,7 +4432,12 @@ Views.discover = async function (main, { params }) {
     busy = false;
   }
   async function loadMore() {
-    if (busy || !searched) return;
+    if (busy) return;
+    if (!searched) {
+      // User clicked load more under the landing recommendations
+      Router.go("#/shelf/beloved");
+      return;
+    }
     busy = true;
     moreBtn.querySelector("button")?.setAttribute("disabled", "");
     const sources = Object.keys(srcState).filter(s => srcState[s] === "ok");
@@ -4385,7 +4475,7 @@ Views.discover = async function (main, { params }) {
       <section class="section" style="margin-top:6px">
         <div class="section-head"><h2>Search everything</h2><span class="sub">One query across seven open catalogs — only what you can genuinely read</span></div>
         <p class="prose" style="font-size:15px">Type a title, an author or a subject above. Results are labelled honestly: <span class="badge b-read">${ic("eye", 11)} Read now</span> opens in the integrated reader; <span class="badge b-ref">${ic("info", 11)} Reference only</span> marks records with no readable copy (enable them with the filter above).</p>
-        ${Comps.shelfSection("try-beloved", "Most beloved classics", "A good place to start")}
+        ${Comps.shelfSection("try-beloved", "Most beloved classics", "A good place to start", "#/shelf/beloved")}
       </section>`;
     const strip = zoneEl.querySelector('[data-shelf="try-beloved"] [data-strip]');
     PG.popular(14).then(items => Comps.fillStrip(strip, items)).catch(() => { strip.innerHTML = ""; });
@@ -5375,10 +5465,7 @@ const Reader = {
     setTimeout(() => box.querySelector("textarea").focus(), 60);
   },
   canSwitchFormat() {
-    if (!this.strategy) return false;
-    if (this.doc && this.doc.id && this.doc.id.startsWith("ia:")) return true;
-    if (this.strategy.scans || (this.strategy.type === "scan" && (this.strategy.ocrUrl || this.strategy.hasOcr))) return true;
-    return false;
+    return !!(this.doc && this.strategy);
   },
   wireFormatSwitch() {
     const btn = U.$("#rd-fmt-btn");
@@ -5405,36 +5492,55 @@ const Reader = {
     }
   },
   async setFormat(targetFmt) {
-    if (!this.canSwitchFormat()) return;
     if (this.renderer && this.renderer.destroy) this.renderer.destroy();
     const stage = U.$("#rd-stage");
     stage.innerHTML = `<div class="rd-load" style="margin:auto"><div class="spin-ring"></div><div style="margin-top:10px">Opening ${targetFmt === "text" ? "clean text" : targetFmt === "webtoon" ? "continuous webtoon" : "digitized page scans"}…</div></div>`;
     const Ctx = { onProgress: p => this.onProgress(p), showSelPop: (x, y, data) => this.showSelPop(x, y, data), onLoadStep: (m, p) => this.loadStep(m, p) };
 
-    const ident = this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier) || (this.doc && this.doc.id && this.doc.id.replace(/^ia:/, ""));
-    const pages = (this.strategy.scans && this.strategy.scans.pages) || this.strategy.pages || 50;
-
     try {
       if (targetFmt === "text") {
         this.currentFormat = "text";
-        const ocrUrl = this.strategy.ocrUrl || this.strategy.url || ("https://archive.org/download/" + encodeURIComponent(ident) + "/" + encodeURIComponent(ident) + "_djvu.txt");
+        let ocrUrl = this.strategy.ocrUrl || this.strategy.url;
+        let ident = this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier) || (this.doc && this.doc.id && this.doc.id.replace(/^ia:/, ""));
+        if (!ocrUrl && ident) {
+          ocrUrl = "https://archive.org/download/" + encodeURIComponent(ident) + "/" + encodeURIComponent(ident) + "_djvu.txt";
+        }
         const textStrat = { type: "text", url: ocrUrl, fmt: "ocr", key: this.doc.id, ident };
         this.renderer = new TextRenderer(this.doc, textStrat, Ctx);
         await this.renderer.mount(stage);
         Toast.show("Switched to Clean Text / OCR Reader");
       } else {
         this.currentFormat = "scan";
-        const scanStrat = { type: "scan", identifier: ident, pages };
+        let ident = (this.strategy.scans && this.strategy.scans.identifier) || this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier);
+        let pages = (this.strategy.scans && this.strategy.scans.pages) || this.strategy.pages || 0;
+
+        // If ident is missing, or is an e-text Gutenberg mirror (*gut has no scanned JP2 plates),
+        // automatically locate the genuine historical library scan plates from Internet Archive!
+        if (!ident || ident.endsWith("gut") || !pages || pages <= 50) {
+          Toast.show("Locating original library scan plates…");
+          const scanned = await IA.findScannedEdition(this.doc.title, this.doc.byline);
+          if (scanned && scanned.identifier) {
+            ident = scanned.identifier;
+            pages = scanned.pages || 250;
+            this.strategy.scans = { identifier: ident, pages };
+          }
+        }
+
+        if (!ident || ident.endsWith("gut")) {
+          throw new Error("No digitized photo plates exist in the open archives for this volume yet. Switched to Clean Text.");
+        }
+
+        const scanStrat = { type: "scan", identifier: ident, pages: pages || 200, pageUrls: this.strategy.pageUrls };
         this.renderer = new ScanRenderer(this.doc, scanStrat, Ctx);
         if (targetFmt === "webtoon") {
           this.renderer.readingMode = "webtoon";
           Prefs.set("scanReadingMode", "webtoon");
         } else {
-          this.renderer.readingMode = "manga";
+          this.readingMode = "manga";
           Prefs.set("scanReadingMode", "manga");
         }
         await this.renderer.mount(stage);
-        Toast.show(targetFmt === "webtoon" ? "Switched to Continuous Webtoon Mode" : "Switched to Digitized Page Reader (Manga / Comics)");
+        Toast.show(targetFmt === "webtoon" ? "Switched to Continuous Webtoon Mode" : `Switched to Digitized Page Reader (${pages} pages)`);
       }
       // Update dropdown button label and active items without re-creating shell
       const lbl = U.$("#rd-fmt-label");
@@ -5445,7 +5551,10 @@ const Reader = {
         opt.classList.toggle("on", opt.dataset.fmt === targetFmt);
       });
     } catch (e) {
-      Toast.show("Could not switch reading format: " + (e.message || "format unavailable"));
+      Toast.show(e.message || "Could not switch reading format");
+      if (targetFmt !== "text") {
+        setTimeout(() => this.setFormat("text"), 1200);
+      }
     }
   },
   showError(title, msg, canRetry) {
