@@ -645,6 +645,149 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .status-pill *{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* Typeahead Search Suggestion Box */
+.searchbox { position: relative; }
+.search-suggest-box {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surf);
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+  padding: 6px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.search-suggest-box[hidden] { display: none !important; }
+.suggest-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background .12s ease;
+}
+.suggest-opt:hover, .suggest-opt:focus {
+  background: var(--surf2);
+  outline: none;
+}
+.suggest-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.3;
+}
+.suggest-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--ink3);
+  width: 100%;
+}
+.suggest-byline {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.suggest-badge {
+  padding: 1px 6px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  background: color-mix(in srgb, var(--brass) 18%, transparent);
+  color: var(--ink);
+}
+
+/* Reader Volume / Chapter Switcher */
+.rd-vol-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 4px;
+}
+.rd-vol-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--surf2);
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.rd-vol-btn:hover {
+  background: var(--brass);
+  color: var(--surf);
+}
+.rd-vol-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--surf);
+  border: var(--sp2);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  padding: 6px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rd-vol-menu[hidden] { display: none !important; }
+.rd-vol-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-size: 12.5px;
+}
+.rd-vol-opt:hover { background: var(--surf2); }
+.rd-vol-opt.on {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  font-weight: 600;
+}
+.rd-vol-opt .v-num {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--surf2);
+  color: var(--accent);
+}
+
 /* Reader Format Dropdown */
 .rd-fmt-dropdown {
   position: relative;
@@ -2876,6 +3019,158 @@ const Curated = {
 /* ============================================================
    FEDERATED SEARCH
    ============================================================ */
+/* ============================================================
+   SERIES VOLUMES REGISTRY
+   ============================================================ */
+const SERIES_VOLUMES = {
+  "demon-slayer": {
+    title: "Demon Slayer: Kimetsu no Yaiba",
+    volumes: [
+      { vol: "Vol. 1", title: "Cruelty", id: "ia:demon-slayer-kimetsu-no-yaiba-vol.-1" },
+      { vol: "Vol. 2", title: "It Was You", id: "ia:demon-slayer-kimetsu-no-yaiba-v-02-2018-digital-danke-empire" },
+      { vol: "Vol. 3", title: "Believe in Yourself", id: "ia:demon-slayer-kimetsu-no-yaiba-v-03-2018-digital-danke-empire" },
+      { vol: "Vol. 4", title: "Robust Blade", id: "ia:demon-slayer-kimetsu-no-yaiba-v-04-2019-digital-danke-empire" },
+      { vol: "Vol. 5", title: "To Hell", id: "ia:demon-slayer-kimetsu-no-yaiba-v-05-2019-digital-danke-empire" },
+      { vol: "Vol. 6", title: "Demon Slayer Gathering", id: "ia:demon-slayer-kimetsu-no-yaiba-v-06-2019-digital-danke-empire" },
+      { vol: "Vol. 16", title: "Indomitable Heart", id: "ia:demon-slayer-kimetsu-no-yaiba-v-16-2020-digital-danke-empire" },
+      { vol: "1-23", title: "Complete Manga Serie (All Volumes)", id: "ia:demon-slayer-serie-manga-completa_202606" }
+    ]
+  },
+  "hxh": {
+    title: "Hunter x Hunter",
+    volumes: [
+      { vol: "Vol. 1", title: "The Day of Departure", id: "ia:vol-1_20260521" },
+      { vol: "Vol. 1-39", title: "Vol. 1-39 Complete Library Collection", id: "ia:hx-h-vol.-1-39" }
+    ]
+  },
+  "solo-leveling": {
+    title: "Solo Leveling",
+    volumes: [
+      { vol: "Vol. 1", title: "The E-Rank Hunter", id: "ia:solo-leveling-vol-1-by-chugong-pdfread.net" },
+      { vol: "Chapters", title: "Solo Leveling Complete Chapters Collection", id: "ia:solo-leveling_202510" }
+    ]
+  },
+  "dorohedoro": {
+    title: "Dorohedoro",
+    volumes: [
+      { vol: "Vol. 1", title: "Caiman", id: "ia:dorohedoro-volume-01-packs-de-hqs_202604" },
+      { vol: "1-23", title: "Complete Manga Collection (Vol 1-23)", id: "ia:dorohedoro-" }
+    ]
+  },
+  "berserk": {
+    title: "Berserk",
+    volumes: [
+      { vol: "Vol. 1", title: "The Black Swordsman", id: "ia:manga_Berserk" },
+      { vol: "1-41", title: "Berserk Volumes 1-41 Collection", id: "ia:berserk-volume-41_20231228" }
+    ]
+  }
+};
+
+/* ============================================================
+   SEARCH SUGGESTIONS / TYPEAHEAD ENGINE
+   ============================================================ */
+const SearchSuggest = {
+  async getSuggestions(q) {
+    if (!q || q.trim().length < 2) return [];
+    const term = q.trim().toLowerCase();
+
+    // 1. Curated matches (instant, 0 network latency)
+    const curatedMatches = CURATED_ITEMS.filter(c => 
+      c.t.toLowerCase().includes(term) || (c.a && c.a.toLowerCase().includes(term))
+    ).slice(0, 5).map(c => ({
+      id: c.id,
+      title: c.t,
+      byline: c.a,
+      badge: c.shelf === "manga" || c.shelf === "comics" ? "Manga" : "Book",
+      type: "curated"
+    }));
+
+    // 2. Fetch remote matches (filtered against spam)
+    const remoteMatches = [];
+    if (term.length >= 3 && curatedMatches.length < 5) {
+      try {
+        const cleanQ = `title:("${term}") AND mediatype:texts AND -title:(watch OR streaming OR boxmovies OR subtitles OR vodlocker OR dispatch OR crack OR torrent)`;
+        const [iaDocs, mdList] = await Promise.all([
+          Net.cachedJson(`https://archive.org/advancedsearch.php?q=${encodeURIComponent(cleanQ)}&fl[]=identifier,title,creator&rows=4&output=json`, 5 * 60 * 1000).catch(() => null),
+          MangaDex.search(term, 3).catch(() => [])
+        ]);
+        if (iaDocs && iaDocs.response && iaDocs.response.docs) {
+          iaDocs.response.docs.forEach(d => {
+            if (!curatedMatches.some(m => m.title.toLowerCase() === d.title.toLowerCase())) {
+              remoteMatches.push({
+                id: "ia:" + d.identifier,
+                title: d.title,
+                byline: d.creator || "Open Archive",
+                badge: "Book",
+                type: "ia"
+              });
+            }
+          });
+        }
+        (mdList || []).forEach(m => {
+          if (!curatedMatches.some(c => c.title.toLowerCase().includes(m.title.toLowerCase()))) {
+            remoteMatches.push({
+              id: m.id,
+              title: m.title,
+              byline: m.byline,
+              badge: "Manga",
+              type: "manga"
+            });
+          }
+        });
+      } catch (e) {}
+    }
+
+    return curatedMatches.concat(remoteMatches).slice(0, 6);
+  },
+  attach(inputEl, onSelect) {
+    if (!inputEl) return;
+    let box = inputEl.parentElement.querySelector(".search-suggest-box");
+    if (!box) {
+      box = document.createElement("div");
+      box.className = "search-suggest-box";
+      box.hidden = true;
+      inputEl.parentElement.style.position = "relative";
+      inputEl.parentElement.appendChild(box);
+    }
+
+    let deb;
+    inputEl.addEventListener("input", () => {
+      clearTimeout(deb);
+      const v = inputEl.value.trim();
+      if (v.length < 2) { box.hidden = true; box.innerHTML = ""; return; }
+      deb = setTimeout(async () => {
+        const list = await SearchSuggest.getSuggestions(v);
+        if (!list.length || inputEl.value.trim() !== v) { box.hidden = true; return; }
+        box.innerHTML = list.map((item, idx) => `
+          <button type="button" class="suggest-opt" data-idx="${idx}">
+            <span class="suggest-title">${U.esc(item.title)}</span>
+            <span class="suggest-meta">
+              <span class="suggest-byline">${U.esc(item.byline || "")}</span>
+              <span class="suggest-badge">${U.esc(item.badge)}</span>
+            </span>
+          </button>
+        `).join("");
+        box.hidden = false;
+
+        box.querySelectorAll(".suggest-opt").forEach(btn => {
+          btn.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            const it = list[parseInt(btn.dataset.idx, 10)];
+            box.hidden = true;
+            if (onSelect) onSelect(it);
+            else openReader(it.id);
+          });
+        });
+      }, 160);
+    });
+
+    inputEl.addEventListener("blur", () => {
+      setTimeout(() => { box.hidden = true; }, 220);
+    });
+  }
+};
+
 const SRC_RANK = { ia: 0, pg: 1, ws: 3, pmc: 4, ox: 5, ol: 6, arx: 0 };
 function dedupeKey(it) {
   if (it.src === "ia") { const m = (it.read && it.read.identifier || "").match(/(\d{2,})gut$/); return m ? "pg:" + m[1] : it.id; }
@@ -2891,7 +3186,15 @@ function scoreItem(it, q) {
   if (it.badge === "read") s += 0.8;
   return s;
 }
-const KIND_SOURCES = { all: ["ia", "ws", "pmc", "ox"], scans: ["ia"], ebooks: ["ia"], texts: ["ws", "ia"], articles: ["pmc", "ox"] };
+const KIND_SOURCES = { all: ["ia", "ws", "md"], scans: ["ia"], ebooks: ["ia"], texts: ["ws", "ia"], articles: ["pmc", "ox"] };
+function isSpamResult(it) {
+  const t = (it.title || "").toLowerCase();
+  const b = (it.byline || "").toLowerCase();
+  if (/watch\b|streaming|boxmovies|vodlocker|subtitles|sinhala|1080p|full movie|download free|dispatch/i.test(t)) return true;
+  if (/cern european organization for nuclear research/i.test(b)) return true;
+  return false;
+}
+
 const Federated = {
   async search(params, onBatch) {
     const enabled = (params.sources && params.sources.slice()) || (KIND_SOURCES[params.kind || "all"] || KIND_SOURCES.all).slice();
@@ -2903,11 +3206,13 @@ const Federated = {
         let res;
         if (src === "ia") res = await IA.search({ q: params.q, page: pg2, lang: params.lang, yearFrom: params.yearFrom, yearTo: params.yearTo, sort: params.sort });
         else if (src === "ws") res = await WS.search({ q: params.q, page: pg2, lang: params.wsLang || "en" });
+        else if (src === "md") { const mdList = await MangaDex.search(params.q, 10); res = { items: mdList, total: mdList.length, hasMore: false }; }
         else if (src === "pmc") res = await PMC.search({ q: params.q, page: pg2 });
         else if (src === "ox") res = await OX.search({ q: params.q, page: pg2 });
         else if (src === "ol") res = await OL.search({ q: params.q, page: pg2 });
         if (!res) throw new Error("no result");
-        return { src, items: res.items || [], total: res.total || 0, hasMore: !!res.hasMore };
+        const cleanItems = (res.items || []).filter(it => !isSpamResult(it));
+        return { src, items: cleanItems, total: res.total || cleanItems.length, hasMore: !!res.hasMore };
       } catch (e) { SrcFail.mark(src); return { src, failed: true, items: [], total: 0 }; }
     })().then(r => { try { onBatch(r); } catch (e) {} }));
     await Promise.allSettled(jobs);
@@ -3482,20 +3787,17 @@ const Views = {};
 Views.manga = async function (main) {
   main.innerHTML = `
   <div class="view"><div class="container">
-    <div class="coll-view-head" style="margin-bottom:24px">
+    <div class="coll-view-head" style="margin-bottom:20px">
       <span class="qa-seal" style="background:linear-gradient(135deg, #ff4757, #ff6b81);color:#fff">🇯🇵</span>
       <div class="grow">
-        <div class="kicker caps" style="color:var(--accent);font-weight:700;letter-spacing:1.5px;font-size:11px">WORLDWIDE MANGA, MANHWA & GRAPHIC NOVELS · বিশ্বव्यापी मङ्गा संग्रह</div>
-        <h1 style="margin:4px 0 8px">Manga, Comics &amp; Graphic Art</h1>
-        <div class="sub" style="font-size:15px;line-height:1.5">
-          From Japanese Shonen &amp; Seinen legends (<em>Demon Slayer</em>, <em>Hunter x Hunter</em>, <em>Dorohedoro</em>, <em>Berserk</em>) to Korean Webtoons (<em>Solo Leveling</em>), Edo woodblocks and international graphic novels. Read in authentic <strong>Right-to-Left (Manga)</strong> or <strong>Continuous Webtoon Strip</strong> with zero paywalls.
-        </div>
+        <h1>Manga, Manhwa &amp; Graphic Art</h1>
+        <div class="sub">Japanese Manga, Korean Manhwa, Webtoons and Graphic Novels — with Right-to-Left (Manga) and continuous Webtoon scrolling.</div>
       </div>
       <a class="btn ghost" href="#/home">${ic("chevL", 16)} Back to Home</a>
     </div>
 
-    <!-- Dedicated Manga Search Bar -->
-    <div class="manga-search-box" style="margin-bottom:28px;padding:22px;background:var(--surf2);border:var(--sp);border-radius:var(--radius-lg);box-shadow:0 4px 18px rgba(0,0,0,0.06)">
+    <!-- Manga Search Bar with Live Typeahead Autocomplete -->
+    <div class="manga-search-box" style="margin-bottom:24px;padding:20px;background:var(--surf2);border:var(--sp);border-radius:var(--radius-lg)">
       <form id="manga-search-form" style="display:flex;gap:10px">
         <div class="searchbox" style="flex:1">
           ${ic("search", 20)}
@@ -3503,181 +3805,81 @@ Views.manga = async function (main) {
           <button class="go" type="submit">Search Manga</button>
         </div>
       </form>
-      <div class="hero-suggest" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:6px">
-        <span class="small muted" style="align-self:center;margin-right:6px">Popular series:</span>
-        ${["Hunter x Hunter", "Solo Leveling", "Demon Slayer", "Dorohedoro", "Berserk", "Chainsaw Man", "Attack on Titan", "Death Note", "Jujutsu Kaisen", "One Piece", "JoJo", "Tokyo Ghoul"].map(q => `<button class="chip" data-mq="${U.esc(q)}">${ic("kite", 12)} ${U.esc(q)}</button>`).join("")}
+      <div class="hero-suggest" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">
+        <span class="small muted" style="align-self:center;margin-right:6px">Popular:</span>
+        ${["Hunter x Hunter", "Solo Leveling", "Demon Slayer", "Dorohedoro", "Berserk", "Chainsaw Man", "Attack on Titan", "Death Note", "Jujutsu Kaisen", "One Piece", "Tokyo Ghoul", "JoJo"].map(q => `<button class="chip" data-mq="${U.esc(q)}">${ic("kite", 12)} ${U.esc(q)}</button>`).join("")}
       </div>
     </div>
 
-    <!-- Live Search Results (hidden until search) -->
-    <section class="section" id="manga-search-section" hidden>
-      <div class="section-head">
-        <h2 id="manga-search-title">Search Results</h2>
-        <button class="btn sm ghost" id="manga-search-clear">${ic("x", 14)} Clear search</button>
-      </div>
-      <div class="lib-grid" id="manga-search-grid"></div>
-    </section>
-
-    <!-- Feature Pillars -->
-    <div class="feature-grid" style="margin-bottom:32px">
-      <div class="feature-cell">
-        <span style="font-size:24px;margin-bottom:8px">📖</span>
-        <h4>Right-to-Left (RTL) Manga Mode</h4>
-        <p>Original Japanese reading direction: turn pages right-to-left with arrow keys or swipe navigation.</p>
-      </div>
-      <div class="feature-cell">
-        <span style="font-size:24px;margin-bottom:8px">📜</span>
-        <h4>Continuous Webtoon Strip</h4>
-        <p>Seamless vertical scroll stream designed for Korean manhwa (Solo Leveling) and mobile reading.</p>
-      </div>
-      <div class="feature-cell">
-        <span style="font-size:24px;margin-bottom:8px">🌏</span>
-        <h4>Japan, Korea &amp; Global Open Catalogs</h4>
-        <p>Over 500,000 manga chapters, manhwa webtoons, and graphic plates with zero ads or tracking.</p>
-      </div>
+    <!-- Category Filter Tabs -->
+    <div class="filter-strip" style="display:flex;gap:8px;margin-bottom:24px;overflow-x:auto;padding-bottom:4px">
+      <button class="btn sm on" data-filter="all">All Content</button>
+      <button class="btn sm ghost" data-filter="jp">🇯🇵 Japanese Manga</button>
+      <button class="btn sm ghost" data-filter="kr">🇰🇷 Korean Manhwa</button>
+      <button class="btn sm ghost" data-filter="classic">🎨 Classic Graphic Art</button>
     </div>
 
-    <!-- Shelf 1: Worldwide Manga & Manhwa Hits -->
-    <section class="section">
-      <div class="section-head">
-        <h2>🔥 Worldwide Manga &amp; Manhwa Hits</h2>
-        <span class="sub">The most celebrated Japanese Shonen/Seinen &amp; Korean Webtoon legends</span>
-      </div>
-      <div class="shelf">
-        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
-        <div class="shelf-strip" data-strip data-manga-hits>${Comps.skCards(6)}</div>
-        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
-      </div>
-    </section>
+    <!-- Unified Manga Content Grid -->
+    <div class="vol-grid" id="manga-main-grid" style="grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:20px">
+      ${Comps.skCards(18)}
+    </div>
 
-    <!-- Shelf 2: Shonen & Seinen Masterpieces -->
-    <section class="section">
-      <div class="section-head">
-        <h2>🇯🇵 Japanese Shonen &amp; Seinen Masterpieces</h2>
-        <span class="sub">Berserk, Attack on Titan, Death Note, Chainsaw Man &amp; Jujutsu Kaisen</span>
-      </div>
-      <div class="shelf">
-        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
-        <div class="shelf-strip" data-strip data-manga-shonen>${Comps.skCards(6)}</div>
-        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
-      </div>
-    </section>
-
-    <!-- Shelf 3: Historic Japanese Art & Classic Comics -->
-    <section class="section">
-      <div class="section-head">
-        <h2>🎨 Historic Edo Art &amp; Classic Comic Albums</h2>
-        <span class="sub">Hokusai Manga (1814), Japanese Fairy Tales, Little Nemo in Slumberland</span>
-      </div>
-      <div class="shelf">
-        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
-        <div class="shelf-strip" data-strip data-manga-classics>${Comps.skCards(6)}</div>
-        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
-      </div>
-    </section>
-
-    <!-- Shelf 4: Live Open Archive Manga Stacks -->
-    <section class="section">
-      <div class="section-head">
-        <h2>📚 Live Archive Manga &amp; Comics Stacks</h2>
-        <span class="sub">Over 100,000 digitized manga volumes from the open archive</span>
-        <a class="more" href="#/discover?q=${encodeURIComponent('subject:manga OR collection:manga_library OR (subject:comics AND mediatype:texts)')}">Browse all manga ${ic("arrowR", 14)}</a>
-      </div>
-      <div class="shelf">
-        <button class="shelf-arrow shelf-prev" aria-label="Scroll left" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:-450,behavior:'smooth'})">&lsaquo;</button>
-        <div class="shelf-strip" data-strip data-manga-live>${Comps.skCards(6)}</div>
-        <button class="shelf-arrow shelf-next" aria-label="Scroll right" onclick="this.parentElement.querySelector('[data-strip]').scrollBy({left:450,behavior:'smooth'})">&rsaquo;</button>
-      </div>
-    </section>
+    <div class="load-more-wrap" style="margin-top:32px;text-align:center">
+      <button class="btn primary" id="manga-load-more" style="padding:10px 24px;font-size:14px">
+        ${ic("chevD", 16)} Load more manga &amp; manhwa
+      </button>
+    </div>
   </div></div>`;
 
-  // Populate Shelves
-  const hitsIds = [
-    "ia:demon-slayer-kimetsu-no-yaiba-vol.-1",
-    "ia:vol-1_20260521",
-    "ia:solo-leveling-vol-1-by-chugong-pdfread.net",
-    "ia:dorohedoro-volume-01-packs-de-hqs_202604",
-    "ia:chainsaw-man-vol.1",
-    "ia:onepiece0000odae_c0n6"
-  ];
-  const hitsStrip = main.querySelector("[data-manga-hits]");
-  if (hitsStrip) {
-    const items = hitsIds.map(id => Curated.byId(id)).filter(Boolean).map(c => Curated.item(c));
-    Comps.fillStrip(hitsStrip, items);
-  }
-
-  const shonenIds = [
-    "ia:manga_Berserk",
-    "ia:aot-full",
-    "ia:deathnotecollection",
-    "ia:jujutsu-kaisen-full-manga",
-    "ia:entirety-of-tokyo-ghoul-and-re",
-    "ia:jojopart7steelballrunvolume1_20191123"
-  ];
-  const shonenStrip = main.querySelector("[data-manga-shonen]");
-  if (shonenStrip) {
-    const items = shonenIds.map(id => Curated.byId(id)).filter(Boolean).map(c => Curated.item(c));
-    Comps.fillStrip(shonenStrip, items);
-  }
-
-  const classicsIds = [
-    "ia:hokusaimangav12kats",
-    "ia:hokusaimangathes01kats",
-    "ia:japanesefairytalseser01no01thom",
-    "ia:littlenemo00mccagoog",
-    "ia:dreamsrarebitfi00mccagoog",
-    "ia:realmothergoosewrig"
-  ];
-  const classicsStrip = main.querySelector("[data-manga-classics]");
-  if (classicsStrip) {
-    const items = classicsIds.map(id => Curated.byId(id)).filter(Boolean).map(c => Curated.item(c));
-    Comps.fillStrip(classicsStrip, items);
-  }
-
-  const liveStrip = main.querySelector("[data-manga-live]");
-  if (liveStrip) {
-    IA.search({ q: "subject:manga OR collection:manga_library OR (subject:comics AND mediatype:texts)", sort: "popular", rows: 14 })
-      .then(res => { if (res && res.items) Comps.fillStrip(liveStrip, res.items); })
-      .catch(() => {});
-  }
-
-  // Wire Manga Search
-  const sForm = main.querySelector("#manga-search-form");
+  const grid = main.querySelector("#manga-main-grid");
   const sIn = main.querySelector("#manga-search-in");
-  const sSec = main.querySelector("#manga-search-section");
-  const sGrid = main.querySelector("#manga-search-grid");
-  const sTitle = main.querySelector("#manga-search-title");
-  const sClear = main.querySelector("#manga-search-clear");
+  const sForm = main.querySelector("#manga-search-form");
+  const moreBtn = main.querySelector("#manga-load-more");
 
+  // Attach live typeahead suggestions to manga search input
+  SearchSuggest.attach(sIn, it => openReader(it.id));
+
+  // Load curated manga content directly into unified grid
+  const allMangaItems = Curated.byShelf("manga").concat(Curated.byShelf("comics")).map(c => Curated.item(c));
+  CardRegistry.put(allMangaItems);
+  grid.innerHTML = allMangaItems.map(it => Comps.volCard(it)).join("");
+  Comps.bindCards(grid);
+
+  // Filter tabs handler
+  main.querySelectorAll("[data-filter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      main.querySelectorAll("[data-filter]").forEach(b => { b.classList.remove("on"); b.classList.add("ghost"); });
+      btn.classList.add("on"); btn.classList.remove("ghost");
+      const f = btn.dataset.filter;
+      let filtered = allMangaItems;
+      if (f === "jp") filtered = allMangaItems.filter(it => !it.title.includes("Solo Leveling") && !it.title.includes("Slumberland") && !it.title.includes("Mother Goose"));
+      else if (f === "kr") filtered = allMangaItems.filter(it => it.title.includes("Solo Leveling"));
+      else if (f === "classic") filtered = allMangaItems.filter(it => it.title.includes("Hokusai") || it.title.includes("Little Nemo") || it.title.includes("Mother Goose") || it.title.includes("Fairy tale"));
+      grid.innerHTML = filtered.map(it => Comps.volCard(it)).join("");
+      Comps.bindCards(grid);
+    });
+  });
+
+  // Manga search execution
   const doMangaSearch = async (q) => {
     if (!q || !q.trim()) return;
-    sSec.hidden = false;
-    sTitle.innerHTML = `<span class="row"><span class="spin"></span> Searching manga collections for “${U.esc(q)}”…</span>`;
-    sGrid.innerHTML = Comps.skCards(12);
-    sSec.scrollIntoView({ behavior: "smooth", block: "start" });
-
+    grid.innerHTML = Comps.skCards(12);
     try {
+      const cleanQ = `title:("${q}") AND mediatype:texts AND -title:(watch OR streaming OR boxmovies OR subtitles OR vodlocker OR dispatch OR crack OR torrent)`;
       const [iaRes, mdItems] = await Promise.all([
-        IA.search({ q: `(title:("${encodeURIComponent(q)}") OR "${encodeURIComponent(q)}") AND mediatype:texts AND (subject:manga OR subject:comic OR collection:comics OR collection:manga_library OR description:manga)`, rows: 18, sort: "popular" }).catch(() => ({ items: [] })),
+        IA.search({ q: cleanQ, rows: 18, sort: "popular" }).catch(() => ({ items: [] })),
         MangaDex.search(q, 12).catch(() => [])
       ]);
-
-      const items = (iaRes.items || []).concat(mdItems || []);
+      const items = (mdItems || []).concat(iaRes.items || []).filter(it => !isSpamResult(it));
       if (!items.length) {
-        sTitle.textContent = `No manga found for “${q}”`;
-        sGrid.innerHTML = `<div class="hintbox" style="grid-column:1/-1">No matches found. Try searching for "Hunter x Hunter", "Solo Leveling", "Demon Slayer", "Dorohedoro", or "Berserk".</div>`;
+        grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><h3>No manga found for “${U.esc(q)}”</h3><p>Try searching for "Hunter x Hunter", "Solo Leveling", "Demon Slayer", "Dorohedoro", or "Berserk".</p></div>`;
         return;
       }
-      sTitle.textContent = `Found ${items.length} manga volumes for “${q}”`;
-      sGrid.innerHTML = items.map(d => Comps.volCard(d)).join("");
-      U.$$("[data-doc]", sGrid).forEach(c => {
-        const act = () => openReader(c.dataset.doc);
-        c.addEventListener("click", act);
-        c.addEventListener("keydown", e => { if (e.key === "Enter") act(); });
-      });
-    } catch (err) {
-      sTitle.textContent = "Search error";
-      sGrid.innerHTML = `<div class="hintbox" style="grid-column:1/-1">Could not complete manga search: ${U.esc(err.message)}</div>`;
+      CardRegistry.put(items);
+      grid.innerHTML = items.map(it => Comps.volCard(it)).join("");
+      Comps.bindCards(grid);
+    } catch (e) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><h3>Search failed</h3><p>${U.esc(e.message)}</p></div>`;
     }
   };
 
@@ -3693,9 +3895,25 @@ Views.manga = async function (main) {
     });
   });
 
-  sClear.addEventListener("click", () => {
-    sSec.hidden = true;
-    sIn.value = "";
+  // Load more manga dynamically from open catalog
+  let mangaPage = 1;
+  moreBtn.addEventListener("click", async () => {
+    moreBtn.innerHTML = `<span class="spin"></span> Loading more manga…`;
+    mangaPage++;
+    try {
+      const res = await IA.search({ q: "collection:(manga_library) OR (subject:manga AND mediatype:texts)", sort: "popular", rows: 18, page: mangaPage });
+      const clean = (res.items || []).filter(it => !isSpamResult(it));
+      if (clean.length) {
+        CardRegistry.put(clean);
+        grid.insertAdjacentHTML("beforeend", clean.map(it => Comps.volCard(it)).join(""));
+        Comps.bindCards(grid);
+        moreBtn.innerHTML = `${ic("chevD", 16)} Load more manga &amp; manhwa`;
+      } else {
+        moreBtn.parentElement.innerHTML = `<span class="small muted">All available manga volumes loaded.</span>`;
+      }
+    } catch (e) {
+      moreBtn.innerHTML = `${ic("alert", 14)} Retry loading`;
+    }
   });
 };
 
@@ -4349,6 +4567,7 @@ Views.discover = async function (main, { params }) {
   </div></div>`;
 
   const input = main.querySelector(".disc-head input");
+  SearchSuggest.attach(input, it => openReader(it.id));
   const resultsEl = main.querySelector("[data-results]");
   const zoneEl = main.querySelector("[data-zone]");
   const summaryEl = main.querySelector("[data-summary]");
@@ -5063,6 +5282,7 @@ const Reader = {
       else this.renderer = new TextRenderer(docRec, strategy, Ctx);
       await this.renderer.mount(U.$("#rd-stage"));
       this.wireFormatSwitch();
+      this.wireVolumeSwitcher();
     } catch (e) {
       console.warn("renderer error", e);
       return this.showError("The document could not be displayed", (e && e.message) || "The file may be damaged, too large, or its host did not permit browser reading.", true);
@@ -5104,7 +5324,50 @@ const Reader = {
     this._loadTimer = null;
     this._loadUI = null;
   },
-  buildShell(doc) {
+    getSeriesVolumes() {
+    if (!this.doc) return null;
+    const docId = this.doc.id || "";
+    for (const [key, s] of Object.entries(SERIES_VOLUMES)) {
+      if (docId.includes(s.title.toLowerCase().replace(/[^a-z0-9]/g, "")) || s.volumes.some(v => v.id === docId)) {
+        return s.volumes;
+      }
+    }
+    if (this.strategy && this.strategy.chapters && this.strategy.chapters.length > 1) {
+      return this.strategy.chapters.map(c => ({
+        vol: c.ch ? `Ch. ${c.ch}` : "Ch",
+        title: c.title || `Chapter ${c.ch}`,
+        id: `md:${this.strategy.identifier}:${c.id}`
+      }));
+    }
+    return null;
+  },
+  getCurrentVolumeLabel() {
+    const vols = this.getSeriesVolumes();
+    if (!vols) return "Vol. 1";
+    const cur = vols.find(v => v.id === this.doc.id);
+    return cur ? cur.vol : "Volume";
+  },
+  wireVolumeSwitcher() {
+    const btn = U.$("#rd-vol-btn");
+    const menu = U.$("#rd-vol-menu");
+    if (!btn || !menu) return;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      menu.hidden = !menu.hidden;
+    };
+    menu.querySelectorAll("[data-vid]").forEach(opt => {
+      opt.onclick = (e) => {
+        e.stopPropagation();
+        menu.hidden = true;
+        this.open(opt.dataset.vid);
+      };
+    });
+    window.addEventListener("click", () => {
+      const m = U.$("#rd-vol-menu");
+      if (m) m.hidden = true;
+    });
+  },
+buildShell(doc) {
     this._stopLoadUI();
     const root = U.$("#reader-root");
     root.innerHTML = `
@@ -5113,6 +5376,21 @@ const Reader = {
       <header class="rd-top">
         <button class="btn icon ghost" id="rd-back" aria-label="Back to the library" title="Back (Esc)">${ic("chevL", 20)}</button>
         <div class="rt-title"><div class="t">${U.esc(doc.title)}</div><div class="loc" id="rd-loc">preparing…</div></div>
+        ${this.getSeriesVolumes() ? `
+        <div class="rd-vol-picker">
+          <button class="rd-vol-btn" id="rd-vol-btn" aria-haspopup="true" title="Switch between volumes and chapters">
+            ${ic("book", 13)} <span>${this.getCurrentVolumeLabel()}</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:3px"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="rd-vol-menu" id="rd-vol-menu" hidden>
+            ${this.getSeriesVolumes().map(v => `
+              <button class="rd-vol-opt ${v.id === doc.id ? 'on' : ''}" data-vid="${U.esc(v.id)}">
+                <span class="v-num">${U.esc(String(v.vol))}</span>
+                <span class="v-title">${U.esc(v.title)}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>` : ""}
         ${this.canSwitchFormat() ? `
         <div class="rd-fmt-dropdown">
           <button class="rd-fmt-btn" id="rd-fmt-btn" aria-haspopup="true" aria-expanded="false" title="Switch reading format">
@@ -6924,6 +7202,8 @@ class EpubRenderer {
     const v = U.$("#topq").value.trim();
     Router.go("#/discover" + (v ? "?q=" + encodeURIComponent(v) : ""));
   };
+  const topqIn = U.$("#topq");
+  if (topqIn) SearchSuggest.attach(topqIn, it => openReader(it.id));
   U.$("#topq-go").addEventListener("click", topGo);
   U.$("#topq").addEventListener("keydown", e => { if (e.key === "Enter") topGo(); });
   /* footer */
