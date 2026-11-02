@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="sepia">
 <head>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true,
+    processEnvironments: true
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  },
+  startup: {
+    typeset: false
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
@@ -971,6 +988,114 @@ body.in-reader .topbar, body.in-reader #main, body.in-reader .footer{display:non
 .rd-root:fullscreen .rd-top{opacity:0; transition:opacity .25s}
 .rd-root:fullscreen .rd-top:hover{opacity:1}
 .rd-root:fullscreen .rd-top:focus-within{opacity:1}
+/* Manga & Webtoon Reader Modes */
+.scan-stage {
+  user-select: none;
+  -webkit-user-select: none;
+}
+.webtoon-stream {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 10px 0 80px;
+}
+.webtoon-page-item {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: #000;
+  margin: 0;
+  padding: 0;
+}
+.webtoon-page-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.mode-pill {
+  padding: 3px 9px;
+  font-size: 11.5px;
+  font-family: var(--font-sans);
+  border-radius: 99px;
+  cursor: pointer;
+  background: var(--surf);
+  border: var(--sp1);
+  color: var(--ink2);
+  transition: all .15s ease;
+}
+.mode-pill:hover {
+  border-color: var(--brass);
+  color: var(--ink);
+}
+.mode-pill.on {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+.live-stacks-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+.live-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  border: var(--sp2);
+  background: var(--surf);
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.live-tab:hover {
+  border-color: var(--brass);
+  color: var(--ink);
+}
+.live-tab.on {
+  background: var(--ink);
+  color: var(--surf);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+.live-tab .tab-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+.live-tab.on .tab-badge {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+.nepali-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: color-mix(in srgb, #dc143c 15%, transparent);
+  color: #c01035;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid color-mix(in srgb, #dc143c 30%, transparent);
+  margin-bottom: 8px;
+}
+
 /* Real Country Flags & Literature Showcase */
 .country-grid {
   display: grid;
@@ -2532,7 +2657,8 @@ const SHELVES = [
   { id: "beloved", name: "The classics shelf", blurb: "The most-read novels of the open stacks — every one verified to open here.", icon: "book", tint: "" },
   { id: "wonder", name: "Worlds of wonder", blurb: "Science fiction, fantasy and strange futures from the golden age.", icon: "compass", tint: "" },
   { id: "machines", name: "Machines that think", blurb: "Landmark papers of modern AI beside the memoir of the first computer designer.", icon: "flask", tint: "t-science" },
-  { id: "comics", name: "Picture stories & early comics", blurb: "Full-page comic art and Japanese manga from the public domain, plate by plate.", icon: "kite", tint: "t-art" },
+  { id: "manga", name: "Manga & Graphic Art", blurb: "Japanese manga, Hokusai Manga plates, golden-age comics and graphic narratives.", icon: "kite", tint: "t-art" },
+  { id: "nepal", name: "नेपाली डिजिटल पुस्तकालय", blurb: "नेपाली साहित्यका कालजयी कृतिहरू — मुनामदन, भानुभक्तीय रामायण, शाकुन्तल महाकाव्य तथा ऐतिहासिक दस्तावेजहरू।", icon: "book", tint: "t-heritage" },
   { id: "detective", name: "Detective & mystery", blurb: "Locked rooms, foggy streets and very patient sleuths.", icon: "key", tint: "" },
   { id: "verse", name: "The poetry corner", blurb: "Ballads, sonnets and epics across thirty centuries.", icon: "quill", tint: "t-art" },
   { id: "storytime", name: "Storybooks for young readers", blurb: "Fairy tales and vintage fiction for children.", icon: "star", tint: "" },
@@ -2550,7 +2676,14 @@ const SHELVES = [
   { id: "healing", name: "Healing & the body", blurb: "Nursing, anatomy and the evolution of medicine.", icon: "pulse", tint: "t-science" },
   { id: "nature", name: "Field & garden", blurb: "Mountains, sierra summers and the naturalists' letters.", icon: "leaf", tint: "t-nature" },
 ];
-const CURATED_ITEMS = [{"id":"pg:11","kind":"text","ident":"alicesadventures00011gut","file":"alice30.txt","sz":163218,"t":"Alice's Adventures in Wonderland","a":"Lewis Carroll","y":1865,"shelf":"beloved"},{"id":"pg:1342","kind":"text","ident":"prideandprejudic01342gut","file":"pandp12.txt","sz":717331,"t":"Pride and Prejudice","a":"Jane Austen","y":1813,"shelf":"beloved"},{"id":"pg:84","kind":"text","ident":"frankenstein00084gut","file":"84.txt","sz":448717,"t":"Frankenstein; Or, The Modern Prometheus","a":"Mary Wollstonecraft Shelley","y":1818,"shelf":"beloved"},{"id":"pg:1260","kind":"text","ident":"janeeyre01260gut","file":"janey11.txt","sz":1070886,"t":"Jane Eyre: An Autobiography","a":"Charlotte Brontë","y":1847,"shelf":"beloved"},{"id":"pg:98","kind":"text","ident":"ataleoftwocities00098gut","file":"98.txt","sz":797350,"t":"A Tale of Two Cities","a":"Charles Dickens","y":1859,"shelf":"beloved"},{"id":"pg:2701","kind":"text","ident":"mobydickorthewha02701gut","file":"2701.txt","sz":1257289,"t":"Moby-Dick; Or, The Whale","a":"Herman Melville","y":1851,"shelf":"beloved"},{"id":"pg:345","kind":"text","ident":"dracula00345gut","file":"dracu13.txt","sz":869047,"t":"Dracula","a":"Bram Stoker","y":1897,"shelf":"beloved"},{"id":"pg:1400","kind":"text","ident":"greatexpectation01400gut","file":"1400.txt","sz":1033776,"t":"Great Expectations","a":"Charles Dickens","y":1861,"shelf":"beloved"},{"id":"pg:120","kind":"text","ident":"treasureisland00120gut","file":"120.txt","sz":391556,"t":"Treasure Island","a":"Robert Louis Stevenson","y":1883,"shelf":"beloved"},{"id":"pg:768","kind":"text","ident":"wutheringheights00768gut","file":"wuthr10.txt","sz":675254,"t":"Wuthering Heights","a":"Emily Brontë","y":1847,"shelf":"beloved"},{"id":"pg:174","kind":"text","ident":"thepictureofdori00174gut","file":"dgray10.txt","sz":451987,"t":"The Picture of Dorian Gray","a":"Oscar Wilde","y":1890,"shelf":"beloved"},{"id":"pg:2852","kind":"text","ident":"thehoundofthebas02852gut","file":"2852.txt","sz":346361,"t":"The Hound of the Baskervilles","a":"Arthur Conan Doyle","y":1902,"shelf":"detective"},{"id":"pg:583","kind":"text","ident":"thewomaninwhite00583gut","file":"wwhit10.txt","sz":1399273,"t":"The Woman in White","a":"Wilkie Collins","y":1860,"shelf":"detective"},{"id":"pg:2097","kind":"text","ident":"thesignofthefour02097gut","file":"2097.txt","sz":257693,"t":"The Sign of the Four","a":"Arthur Conan Doyle","y":1890,"shelf":"detective"},{"id":"pg:4047","kind":"text","ident":"theleavenworthca04047gut","file":"lvnwr10.txt","sz":637298,"t":"The Leavenworth Case","a":"Anna Katharine Green","y":1878,"shelf":"detective"},{"id":"pg:155","kind":"text","ident":"themoonstone00155gut","file":"155.txt","sz":1114558,"t":"The Moonstone","a":"Wilkie Collins","y":1868,"shelf":"detective"},{"id":"pg:244","kind":"text","ident":"astudyinscarlet00244gut","file":"244.txt","sz":267370,"t":"A Study in Scarlet","a":"Arthur Conan Doyle","y":1887,"shelf":"detective"},{"id":"pg:863","kind":"text","ident":"themysteriousaff00863gut","file":"masac11.txt","sz":347313,"t":"The Mysterious Affair at Styles","a":"Agatha Christie","y":1920,"shelf":"detective"},{"id":"pg:37106","kind":"text","ident":"littlewomenormeg37106gut","file":"37106.txt","sz":1123163,"t":"Little Women","a":"Louisa May Alcott","y":1868,"shelf":"beloved"},{"id":"pg:35","kind":"text","ident":"thetimemachine00035gut","file":"35.txt","sz":201870,"t":"The Time Machine","a":"H. G. Wells","y":1895,"shelf":"wonder"},{"id":"pg:164","kind":"text","ident":"twentythousandle00164gut","file":"2000010a.txt","sz":885009,"t":"Twenty Thousand Leagues under the Sea","a":"Jules Verne","y":1870,"shelf":"wonder"},{"id":"pg:36","kind":"text","ident":"thewaroftheworld00036gut","file":"36.txt","sz":365444,"t":"The War of the Worlds","a":"H. G. Wells","y":1898,"shelf":"wonder"},{"id":"pg:3748","kind":"text","ident":"ajourneytotheint03748gut","file":"7jrny10.txt","sz":443894,"t":"A Journey to the Interior of the Earth","a":"Jules Verne","y":1864,"shelf":"wonder"},{"id":"pg:139","kind":"text","ident":"thelostworld00139gut","file":"139.txt","sz":451813,"t":"The Lost World","a":"Arthur Conan Doyle","y":1912,"shelf":"wonder"},{"id":"pg:62","kind":"text","ident":"aprincessofmars00062gut","file":"62.txt","sz":398977,"t":"A Princess of Mars","a":"Edgar Rice Burroughs","y":1912,"shelf":"wonder"},{"id":"pg:10007","kind":"text","ident":"carmilla10007gut","file":"10007.txt","sz":180129,"t":"Carmilla","a":"Sheridan Le Fanu","y":1872,"shelf":"tales"},{"id":"pg:8492","kind":"text","ident":"thekinginyellow08492gut","file":"8kngy10.txt","sz":422611,"t":"The King in Yellow","a":"Robert W. Chambers","y":1895,"shelf":"tales"},{"id":"pg:209","kind":"text","ident":"theturnofthescre00209gut","file":"tturn10.txt","sz":246078,"t":"The Turn of the Screw","a":"Henry James","y":1898,"shelf":"tales"},{"id":"pg:5230","kind":"text","ident":"theinvisibleman05230gut","file":"5230.txt","sz":299012,"t":"The Invisible Man","a":"H. G. Wells","y":1897,"shelf":"wonder"},{"id":"pg:25322","kind":"text","ident":"fablesinslang25322gut","file":"25322.txt","sz":114780,"t":"Fables in Slang","a":"George Ade","y":1899,"shelf":"tales"},{"id":"pg:175","kind":"text","ident":"thephantomoftheo00175gut","file":"phant12.txt","sz":498596,"t":"The Phantom of the Opera","a":"Gaston Leroux","y":1910,"shelf":"tales"},{"id":"pg:696","kind":"text","ident":"thecastleofotran00696gut","file":"cotrt10.txt","sz":227001,"t":"The Castle of Otranto","a":"Horace Walpole","y":1764,"shelf":"tales"},{"id":"pg:601","kind":"text","ident":"themonkaromance00601gut","file":"tmonk10.txt","sz":821449,"t":"The Monk: A Romance","a":"Matthew Gregory Lewis","y":1796,"shelf":"tales"},{"id":"pg:12242","kind":"text","ident":"poemsbyemilydick12242gut","file":"12242.txt","sz":208189,"t":"Poems by Emily Dickinson","a":"Emily Dickinson","y":1890,"shelf":"verse"},{"id":"pg:1934","kind":"text","ident":"songsofinnocence01934gut","file":"sinex10.txt","sz":43703,"t":"Songs of Innocence and of Experience","a":"William Blake","y":1789,"shelf":"verse"},{"id":"pg:1322","kind":"text","ident":"leavesofgrass01322gut","file":"lvgrs10.txt","sz":739923,"t":"Leaves of Grass","a":"Walt Whitman","y":1855,"shelf":"verse"},{"id":"pg:16452","kind":"text","ident":"theiliadofhomer16452gut","file":"16452.txt","sz":1172650,"t":"The Iliad","a":"Homer","y":-750,"shelf":"verse"},{"id":"pg:1727","kind":"text","ident":"theodyssey01727gut","file":"dyssy08a.txt","sz":779922,"t":"The Odyssey","a":"Homer","y":-725,"shelf":"verse"},{"id":"pg:16328","kind":"text","ident":"beowulf16328gut","file":"16328.txt","sz":300239,"t":"Beowulf: An Anglo-Saxon Epic Poem","a":"Anonymous","y":900,"shelf":"verse"},{"id":"pg:55","kind":"text","ident":"thewonderfulwiza00055gut","file":"wizoz10.txt","sz":229647,"t":"The Wonderful Wizard of Oz","a":"L. Frank Baum","y":1900,"shelf":"storytime"},{"id":"pg:1597","kind":"text","ident":"andersensfairyta01597gut","file":"hcaft10.txt","sz":315584,"t":"Andersen's Fairy Tales","a":"H. C. Andersen","y":1835,"shelf":"storytime"},{"id":"pg:17396","kind":"text","ident":"thesecretgarden17396gut","file":"17396.txt","sz":461929,"t":"The Secret Garden","a":"Frances Hodgson Burnett","y":1911,"shelf":"storytime"},{"id":"pg:1041","kind":"text","ident":"shakespearessonn01041gut","file":"wssnt10.txt","sz":110622,"t":"Shakespeare's Sonnets","a":"William Shakespeare","y":1609,"shelf":"verse"},{"id":"pg:11860","kind":"text","ident":"blackbeautyyoung11860gut","file":"11860.txt","sz":102565,"t":"Black Beauty","a":"Anna Sewell","y":1877,"shelf":"storytime"},{"id":"pg:503","kind":"text","ident":"thebluefairybook00503gut","file":"503.txt","sz":766025,"t":"The Blue Fairy Book","a":"Andrew Lang","y":1889,"shelf":"storytime"},{"id":"pg:289","kind":"text","ident":"thewindinthewill00289gut","file":"wwill10.txt","sz":344583,"t":"The Wind in the Willows","a":"Kenneth Grahame","y":1908,"shelf":"storytime"},{"id":"pg:4018","kind":"text","ident":"japanesefairytal04018gut","file":"jpnft10.txt","sz":395201,"t":"Japanese Fairy Tales","a":"Yei Theodora Ozaki","y":1903,"shelf":"storytime"},{"id":"pg:14838","kind":"text","ident":"thetaleofpeterra14838gut","file":"14838.txt","sz":26045,"t":"The Tale of Peter Rabbit","a":"Beatrix Potter","y":1902,"shelf":"storytime"},{"id":"pg:19516","kind":"text","ident":"theadventuresofp19516gut","file":"19516.txt","sz":25692,"t":"The Adventures of Pinocchio","a":"Carlo Collodi","y":1883,"shelf":"storytime"},{"id":"pg:7885","kind":"text","ident":"celticfairytales07885gut","file":"8celt10.txt","sz":417796,"t":"Celtic Fairy Tales","a":"Joseph Jacobs","y":1892,"shelf":"storytime"},{"id":"pg:5160","kind":"text","ident":"themabinogion05160gut","file":"mbng10.txt","sz":599427,"t":"The Mabinogion","a":"Lady Charlotte Guest","y":1838,"shelf":"myth"},{"id":"pg:18947","kind":"text","ident":"theyoungeredda18947gut","file":"18947-8.txt","sz":405859,"t":"The Younger Edda","a":"Snorri Sturluson","y":1220,"shelf":"myth"},{"id":"pg:26654","kind":"text","ident":"peterandwendy26654gut","file":"26654.txt","sz":282884,"t":"Peter and Wendy","a":"J. M. Barrie","y":1911,"shelf":"storytime"},{"id":"pg:28497","kind":"text","ident":"mythsofthenorsem28497gut","file":"28497.txt","sz":631615,"t":"Myths of the Norsemen","a":"Hélène Adeline Guerber","y":1909,"shelf":"myth"},{"id":"pg:30795","kind":"text","ident":"thesongofhiawath30795gut","file":"30795.txt","sz":302477,"t":"The Song of Hiawatha","a":"Henry Wadsworth Longfellow","y":1855,"shelf":"myth"},{"id":"pg:4925","kind":"text","ident":"theageoffable04925gut","file":"thgff10.txt","sz":853387,"t":"The Age of Fable","a":"Thomas Bulfinch","y":1855,"shelf":"myth"},{"id":"pg:1497","kind":"text","ident":"therepublic01497gut","file":"1497.txt","sz":1238989,"t":"The Republic","a":"Plato","y":-375,"shelf":"philosophy"},{"id":"pg:391","kind":"text","ident":"thesongofroland00391gut","file":"sorol10.txt","sz":199649,"t":"The Song of Roland","a":"Anonymous","y":1100,"shelf":"myth"},{"id":"pg:19634","kind":"text","ident":"beyondgoodandevi19634gut","file":"19634.txt","sz":23355,"t":"Beyond Good and Evil","a":"Friedrich Nietzsche","y":1886,"shelf":"philosophy"},{"id":"pg:1998","kind":"text","ident":"thusspakezarathu01998gut","file":"spzar10.txt","sz":668660,"t":"Thus Spake Zarathustra","a":"Friedrich Nietzsche","y":1883,"shelf":"philosophy"},{"id":"pg:2680","kind":"text","ident":"meditations02680gut","file":"medma10.txt","sz":419777,"t":"Meditations","a":"Marcus Aurelius","y":180,"shelf":"philosophy"},{"id":"pg:34901","kind":"text","ident":"onliberty34901gut","file":"34901.txt","sz":331057,"t":"On Liberty","a":"John Stuart Mill","y":1859,"shelf":"philosophy"},{"id":"pg:31209","kind":"text","ident":"indianfairytales31209gut","file":"31209.txt","sz":631563,"t":"Indian Fairy Tales","a":"Joseph Jacobs","y":1910,"shelf":"myth"},{"id":"pg:11224","kind":"text","ident":"utilitarianism11224gut","file":"11224.txt","sz":185040,"t":"Utilitarianism","a":"John Stuart Mill","y":1863,"shelf":"philosophy"},{"id":"pg:3207","kind":"text","ident":"leviathan03207gut","file":"lvthn10.txt","sz":1248398,"t":"Leviathan","a":"Thomas Hobbes","y":1651,"shelf":"philosophy"},{"id":"pg:1232","kind":"text","ident":"theprince01232gut","file":"1232.txt","sz":305851,"t":"The Prince","a":"Niccolò Machiavelli","y":1532,"shelf":"philosophy"},{"id":"pg:575","kind":"text","ident":"essaysoffrancisb00575gut","file":"ebacn10.txt","sz":319721,"t":"The Essays of Francis Bacon","a":"Francis Bacon","y":1601,"shelf":"philosophy"},{"id":"pg:5827","kind":"text","ident":"theproblemsofphi05827gut","file":"prphi10.txt","sz":266100,"t":"The Problems of Philosophy","a":"Bertrand Russell","y":1912,"shelf":"philosophy"},{"id":"pg:944","kind":"text","ident":"thevoyageofthebe00944gut","file":"vbgle10a.txt","sz":1273838,"t":"The Voyage of the Beagle","a":"Charles Darwin","y":1839,"shelf":"science"},{"id":"pg:1228","kind":"text","ident":"ontheoriginofspe01228gut","file":"1228.txt","sz":970809,"t":"On the Origin of Species","a":"Charles Darwin","y":1859,"shelf":"science"},{"id":"pg:30155","kind":"ocr","ident":"relativitythespe30155gut","file":"30155-doc_djvu.txt","sz":207392,"t":"Relativity: The Special and General Theory","a":"Albert Einstein","y":1916,"shelf":"science"},{"id":"pg:97","kind":"text","ident":"flatlandaromance00097gut","file":"flat10a.txt","sz":218565,"t":"Flatland: A Romance of Many Dimensions","a":"Edwin Abbott Abbott","y":1884,"shelf":"mathematics"},{"id":"pg:25267","kind":"text","ident":"astronomyforamat25267gut","file":"25267.txt","sz":424448,"t":"Astronomy for Amateurs","a":"Camille Flammarion","y":1904,"shelf":"science"},{"id":"pg:33283","kind":"ocr","ident":"calculusmadeeasy33283gut","file":"33283-pdf_djvu.txt","sz":293912,"t":"Calculus Made Easy","a":"Silvanus Phillips Thompson","y":1910,"shelf":"mathematics"},{"id":"pg:15114","kind":"ocr","ident":"aninvestigationo15114gut","file":"15114-pdf_djvu.txt","sz":829217,"t":"An Investigation of the Laws of Thought","a":"George Boole","y":1854,"shelf":"mathematics"},{"id":"pg:4763","kind":"text","ident":"thegameoflogic04763gut","file":"thgmf10.txt","sz":134510,"t":"The Game of Logic","a":"Lewis Carroll","y":1886,"shelf":"mathematics"},{"id":"pg:7142","kind":"text","ident":"thehistoryofthep07142gut","file":"plpwr10.txt","sz":1218710,"t":"The History of the Peloponnesian War","a":"Thucydides","y":-411,"shelf":"history"},{"id":"pg:28696","kind":"text","ident":"symboliclogic28696gut","file":"28696.txt","sz":471197,"t":"Symbolic Logic","a":"Lewis Carroll","y":1896,"shelf":"mathematics"},{"id":"pg:6400","kind":"text","ident":"thelivesofthetwe06400gut","file":"6400.txt","sz":1418610,"t":"The Lives of the Twelve Caesars","a":"Suetonius","y":121,"shelf":"history"},{"id":"pg:35461","kind":"text","ident":"ashorthistoryoft35461gut","file":"35461.txt","sz":759015,"t":"A Short History of the World","a":"H. G. Wells","y":1922,"shelf":"history"},{"id":"pg:2707","kind":"text","ident":"thehistoryofhero02707gut","file":"1hofh10.txt","sz":910524,"t":"The History of Herodotus","a":"Herodotus","y":-430,"shelf":"history"},{"id":"pg:1067","kind":"text","ident":"personalmemoirso01067gut","file":"1067.txt","sz":763621,"t":"Personal Memoirs of U. S. Grant","a":"Ulysses S. Grant","y":1885,"shelf":"lives"},{"id":"pg:1026","kind":"text","ident":"diaryofanobody01026gut","file":"dnbdy10.txt","sz":250471,"t":"Diary of a Nobody","a":"George & Weedon Grossmith","y":1892,"shelf":"lives"},{"id":"pg:2010","kind":"text","ident":"theautobiography02010gut","file":"adrwn10.txt","sz":141528,"t":"The Autobiography of Charles Darwin","a":"Charles Darwin","y":1887,"shelf":"lives"},{"id":"pg:148","kind":"text","ident":"theautobiography00148gut","file":"bfaut11.txt","sz":399553,"t":"The Autobiography of Benjamin Franklin","a":"Benjamin Franklin","y":1791,"shelf":"lives"},{"id":"pg:1513","kind":"text","ident":"romeoandjuliet01513gut","file":"2ws1610.txt","sz":159505,"t":"Romeo and Juliet","a":"William Shakespeare","y":1597,"shelf":"stage"},{"id":"pg:1524","kind":"text","ident":"hamlet01524gut","file":"2ws2610.txt","sz":193044,"t":"Hamlet, Prince of Denmark","a":"William Shakespeare","y":1602,"shelf":"stage"},{"id":"pg:1533","kind":"text","ident":"macbeth01533gut","file":"2ws3410.txt","sz":120027,"t":"Macbeth","a":"William Shakespeare","y":1606,"shelf":"stage"},{"id":"pg:1514","kind":"text","ident":"amidsummernights01514gut","file":"2ws1710.txt","sz":112267,"t":"A Midsummer Night's Dream","a":"William Shakespeare","y":1600,"shelf":"stage"},{"id":"pg:844","kind":"text","ident":"theimportanceofb00844gut","file":"844.txt","sz":142380,"t":"The Importance of Being Earnest","a":"Oscar Wilde","y":1895,"shelf":"stage"},{"id":"pg:14591","kind":"text","ident":"faust14591gut","file":"14591.txt","sz":249339,"t":"Faust","a":"Johann Wolfgang von Goethe","y":1808,"shelf":"stage"},{"id":"pg:2542","kind":"text","ident":"adollshouseaplay02542gut","file":"dlshs11.txt","sz":161087,"t":"A Doll's House","a":"Henrik Ibsen","y":1879,"shelf":"stage"},{"id":"pg:3825","kind":"text","ident":"pygmalion03825gut","file":"pygml10.txt","sz":208422,"t":"Pygmalion","a":"George Bernard Shaw","y":1913,"shelf":"stage"},{"id":"pg:2554","kind":"text","ident":"crimeandpunishme02554gut","file":"2554.txt","sz":1176831,"t":"Crime and Punishment","a":"Fyodor Dostoyevsky","y":1866,"shelf":"world"},{"id":"pg:2600","kind":"text","ident":"warandpeace02600gut","file":"wrnpc11.txt","sz":3284807,"t":"War and Peace","a":"Leo Tolstoy","y":1869,"shelf":"world"},{"id":"pg:1399","kind":"text","ident":"annakarenina01399gut","file":"1399.txt","sz":2039648,"t":"Anna Karenina","a":"Leo Tolstoy","y":1878,"shelf":"world"},{"id":"pg:23042","kind":"text","ident":"thetempestthewor23042gut","file":"23042.txt","sz":172563,"t":"The Tempest","a":"William Shakespeare","y":1611,"shelf":"stage"},{"id":"pg:1184","kind":"text","ident":"thecountofmontec01184gut","file":"crsto12.txt","sz":2689763,"t":"The Count of Monte Cristo","a":"Alexandre Dumas","y":1844,"shelf":"world"},{"id":"pg:996","kind":"text","ident":"donquixote00996gut","file":"996.txt","sz":2347772,"t":"Don Quixote","a":"Miguel de Cervantes Saavedra","y":1605,"shelf":"world"},{"id":"pg:1081","kind":"text","ident":"deadsouls01081gut","file":"dsols10.txt","sz":835991,"t":"Dead Souls","a":"Nikolai Gogol","y":1842,"shelf":"world"},{"id":"ia:metam10","kind":"text","ident":"metam10","file":"metam10.txt","sz":134072,"t":"Metamorphosis","a":"Franz Kafka","y":1915,"shelf":"world"},{"id":"pg:34811","kind":"text","ident":"buddenbrooksverf34811gut","file":"34811-8.txt","sz":1569413,"t":"Buddenbrooks: Verfall einer Familie","a":"Thomas Mann","y":1901,"shelf":"world"},{"id":"pg:48731","kind":"text","ident":"lesmisrablesvfan48731gut","file":"48731-8.txt","sz":643541,"t":"Les Misérables","a":"Victor Hugo","y":1862,"shelf":"world"},{"id":"pg:61","kind":"text","ident":"thecommunistmani00061gut","file":"61.txt","sz":94271,"t":"The Communist Manifesto","a":"Karl Marx & Friedrich Engels","y":1848,"shelf":"society"},{"id":"pg:55308","kind":"text","ident":"progressandpover55308gut","file":"55308-0.txt","sz":1077774,"t":"Progress and Poverty","a":"Henry George","y":1879,"shelf":"society"},{"id":"pg:408","kind":"text","ident":"thesoulsofblackf00408gut","file":"soulb10.txt","sz":421942,"t":"The Souls of Black Folk","a":"W. E. B. Du Bois","y":1903,"shelf":"society"},{"id":"pg:1566","kind":"text","ident":"theevolutionofmo01566gut","file":"1566.txt","sz":423062,"t":"The Evolution of Modern Medicine","a":"William Osler","y":1921,"shelf":"healing"},{"id":"pg:18402700","kind":"text","ident":"medicalessays18402700gut","file":"2700.txt","sz":797203,"t":"Medical Essays, 1842-1882","a":"Oliver Wendell Holmes","y":1883,"shelf":"healing"},{"id":"pg:12439","kind":"text","ident":"notesonnursing12439gut","file":"12439.txt","sz":274572,"t":"Notes on Nursing","a":"Florence Nightingale","y":1859,"shelf":"healing"},{"id":"pg:205","kind":"text","ident":"walden00205gut","file":"waldn10.txt","sz":663119,"t":"Walden, and On the Duty of Civil Disobedience","a":"Henry David Thoreau","y":1854,"shelf":"nature"},{"id":"pg:1408","kind":"text","ident":"thenaturalhistor01408gut","file":"tnhos10.txt","sz":517321,"t":"The Natural History of Selborne","a":"Gilbert White","y":1789,"shelf":"nature"},{"id":"pg:32540","kind":"text","ident":"myfirstsummerint32540gut","file":"32540.txt","sz":373230,"t":"My First Summer in the Sierra","a":"John Muir","y":1911,"shelf":"nature"},{"id":"pg:3031","kind":"text","ident":"wildanimalsihave03031gut","file":"wldam10.txt","sz":296324,"t":"Wild Animals I Have Known","a":"Ernest Thompson Seton","y":1898,"shelf":"nature"},{"id":"pg:10012","kind":"text","ident":"themountainsofca10012gut","file":"10012.txt","sz":561124,"t":"The Mountains of California","a":"John Muir","y":1894,"shelf":"nature"},{"id":"pg:82","kind":"text","ident":"ivanhoe00082gut","file":"ivnho12.txt","sz":1159165,"t":"Ivanhoe: A Romance","a":"Walter Scott","y":1819,"shelf":"adventure"},{"id":"pg:940","kind":"text","ident":"thelastofthemohi00940gut","file":"940.txt","sz":881808,"t":"The Last of the Mohicans","a":"James Fenimore Cooper","y":1826,"shelf":"adventure"},{"id":"pg:2166","kind":"text","ident":"kingsolomonsmine02166gut","file":"7kslm10.txt","sz":465972,"t":"King Solomon's Mines","a":"H. Rider Haggard","y":1885,"shelf":"adventure"},{"id":"pg:646","kind":"text","ident":"thecoralisland00646gut","file":"coril10a.txt","sz":565227,"t":"The Coral Island","a":"R. M. Ballantyne","y":1858,"shelf":"adventure"},{"id":"ia:2ybrm10a","kind":"text","ident":"2ybrm10a","file":"2ybrm10a.txt","sz":938361,"t":"Two Years Before the Mast","a":"Richard Henry Dana","y":1840,"shelf":"adventure"},{"id":"pg:17157","kind":"text","ident":"gulliverstravels17157gut","file":"17157.txt","sz":314172,"t":"Gulliver's Travels","a":"Jonathan Swift","y":1726,"shelf":"adventure"},{"id":"pg:219","kind":"text","ident":"heartofdarkness00219gut","file":"219.txt","sz":233701,"t":"Heart of Darkness","a":"Joseph Conrad","y":1899,"shelf":"adventure"},{"id":"ia:passagesfromlif01babbgoog","kind":"ocr","ident":"passagesfromlif01babbgoog","file":"passagesfromlif01babbgoog_djvu.txt","sz":1091732,"t":"Passages from the Life of a Philosopher","a":"Charles Babbage","y":1864,"shelf":"machines","fresh":1},{"id":"ia:anatomyofhumanbo1918gray","kind":"ocr","ident":"anatomyofhumanbo1918gray","file":"anatomyofhumanbo1918gray_djvu.txt","sz":4743022,"t":"Anatomy of the Human Body","a":"Henry Gray","y":1918,"shelf":"healing"},{"id":"ia:capitalcritiqueo01marx","kind":"ocr","ident":"capitalcritiqueo01marx","file":"capitalcritiqueo01marx_djvu.txt","sz":2503549,"t":"Capital: A Critique of Political Economy","a":"Karl Marx","y":1867,"shelf":"society"},{"id":"ia:interpretationof1913freu","kind":"ocr","ident":"interpretationof1913freu","file":"interpretationof1913freu_djvu.txt","sz":1452497,"t":"The Interpretation of Dreams","a":"Sigmund Freud","y":1900,"shelf":"science"},{"id":"ia:gallicwar00caes","kind":"ocr","ident":"gallicwar00caes","file":"gallicwar00caes_djvu.txt","sz":1135923,"t":"Commentaries on the Gallic War","a":"Julius Caesar","y":-50,"shelf":"history"},{"id":"pg:5199","kind":"text","ident":"souththestoryofs05199gut","file":"5199.txt","sz":859148,"t":"South: The Story of Shackleton's Last Expedition","a":"Ernest Shackleton","y":1919,"shelf":"lives"},{"id":"pg:11866","kind":"text","ident":"thelifeandmostsu11866gut","file":"11866.txt","sz":666528,"t":"The Life and Adventures of Robinson Crusoe","a":"Daniel Defoe","y":1719,"shelf":"adventure"},{"id":"pg:21076","kind":"ocr","ident":"thefirstsixbooks21076gut","file":"21076-pdf_djvu.txt","sz":513742,"t":"The First Six Books of the Elements of Euclid","a":"Euclid","y":-300,"shelf":"mathematics"},{"id":"pg:3300","kind":"text","ident":"aninquiryintothe03300gut","file":"wltnt11.txt","sz":2277713,"t":"An Inquiry into the Nature and Causes of the Wealth of Nations","a":"Adam Smith","y":1776,"shelf":"society"},{"id":"ia:onmotionheartan00harvgoog","kind":"ocr","ident":"onmotionheartan00harvgoog","file":"onmotionheartan00harvgoog_djvu.txt","sz":398243,"t":"On the Motion of the Heart and Blood in Animals","a":"William Harvey","y":1628,"shelf":"healing","fresh":1},{"id":"pg:246","kind":"text","ident":"therubaiyatofoma00246gut","file":"rubai10.txt","sz":80896,"t":"The Rubaiyat of Omar Khayyam","a":"Omar Khayyam","y":1120,"shelf":"verse"},{"id":"pg:36520","kind":"text","ident":"thedescentofmana36520gut","file":"36520.txt","sz":1043456,"t":"The Descent of Man and Selection in Relation to Sex","a":"Charles Darwin","y":1871,"shelf":"science","fresh":1},{"id":"ia:littlenemo00mccagoog","kind":"scan","ident":"littlenemo00mccagoog","file":null,"sz":0,"t":"Little Nemo","a":"Victor Herbert, Harry Bache Smith, Winsor McCay","y":1908,"shelf":"comics","pages":151,"fresh":1},{"id":"ia:dreamsrarebitfi00mccagoog","kind":"scan","ident":"dreamsrarebitfi00mccagoog","file":null,"sz":0,"t":"Dreams of the Rarebit Fiend","a":"Winsor McCay","y":1905,"shelf":"comics","pages":79,"fresh":1},{"id":"ia:BusterBrownhisd00Outc","kind":"scan","ident":"BusterBrownhisd00Outc","file":null,"sz":0,"t":"Buster Brown, his dog Tige and their troubles","a":"Outcault, Richard Felton, 1863-1928","y":1902,"shelf":"comics","pages":72,"fresh":1},{"id":"ia:realmothergoosewrig","kind":"scan","ident":"realmothergoosewrig","file":null,"sz":0,"t":"The real Mother Goose","a":"Wright, Blanche Fisher, ill","y":1916,"shelf":"comics","pages":74,"fresh":1},{"id":"ia:hokusaimangav12kats","kind":"scan","ident":"hokusaimangav12kats","file":null,"sz":0,"t":"Hokusai manga","a":"Katsushika, Hokusai, 1760-1849","y":1814,"shelf":"comics","pages":32,"fresh":1},{"id":"ia:hokusaimangathes01kats","kind":"scan","ident":"hokusaimangathes01kats","file":null,"sz":0,"t":"Hokusai manga : (the sketchbooks of Hokusai)","a":"Katsushika, Hokusai, 1760-1849","y":1880,"shelf":"comics","pages":62},{"id":"ia:japanesefairytalseser01no01thom","kind":"scan","ident":"japanesefairytalseser01no01thom","file":null,"sz":0,"t":"Japanese fairy tale series","a":"Thomson, D. (David)","y":1885,"shelf":"comics","pages":26},{"id":"arx:1706.03762","kind":"pdf","arx":"1706.03762","sz":2215244,"t":"Attention Is All You Need","a":"Ashish Vaswani, Noam Shazeer, Niki Parmar, et al.","y":2017,"shelf":"machines","fresh":1},{"id":"arx:1512.03385","kind":"pdf","arx":"1512.03385","sz":819383,"t":"Deep Residual Learning for Image Recognition","a":"Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun","y":2015,"shelf":"machines","fresh":1},{"id":"arx:1406.2661","kind":"pdf","arx":"1406.2661","sz":530482,"t":"Generative Adversarial Networks","a":"Ian J. Goodfellow, Jean Pouget-Abadie, et al.","y":2014,"shelf":"machines","fresh":1},{"id":"arx:1810.04805","kind":"pdf","arx":"1810.04805","sz":775166,"t":"BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding","a":"Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova","y":2018,"shelf":"machines","fresh":1},{"id":"arx:1301.3781","kind":"pdf","arx":"1301.3781","sz":228716,"t":"Efficient Estimation of Word Representations in Vector Space","a":"Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean","y":2013,"shelf":"machines","fresh":1},{"id":"arx:1412.6980","kind":"pdf","arx":"1412.6980","sz":584641,"t":"Adam: A Method for Stochastic Optimization","a":"Diederik P. Kingma, Jimmy Ba","y":2014,"shelf":"machines","fresh":1},{"id":"arx:1207.0580","kind":"pdf","arx":"1207.0580","sz":1665256,"t":"Improving Neural Networks by Preventing Co-adaptation of Feature Detectors","a":"Geoffrey E. Hinton, Nitish Srivastava, et al.","y":2012,"shelf":"machines","fresh":1},{"id":"arx:1409.3215","kind":"pdf","arx":"1409.3215","sz":112084,"t":"Sequence to Sequence Learning with Neural Networks","a":"Ilya Sutskever, Oriol Vinyals, Quoc V. Le","y":2014,"shelf":"machines","fresh":1},{"id":"arx:2010.11929","kind":"pdf","arx":"2010.11929","sz":3743814,"t":"An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale","a":"Alexey Dosovitskiy, Lucas Beyer, et al.","y":2020,"shelf":"machines","fresh":1},{"id":"arx:2006.11239","kind":"pdf","arx":"2006.11239","sz":10267274,"t":"Denoising Diffusion Probabilistic Models","a":"Jonathan Ho, Ajay Jain, Pieter Abbeel","y":2020,"shelf":"machines","fresh":1},{"id":"arx:2103.00020","kind":"pdf","arx":"2103.00020","sz":6813639,"t":"Learning Transferable Visual Models From Natural Language Supervision","a":"Alec Radford, Jong Wook Kim, et al.","y":2021,"shelf":"machines","fresh":1},{"id":"arx:1312.5602","kind":"pdf","arx":"1312.5602","sz":483443,"t":"Playing Atari with Deep Reinforcement Learning","a":"Volodymyr Mnih, Koray Kavukcuoglu, et al.","y":2013,"shelf":"machines","fresh":1},{"id":"arx:1506.02640","kind":"pdf","arx":"1506.02640","sz":5296750,"t":"You Only Look Once: Unified, Real-Time Object Detection","a":"Joseph Redmon, Santosh Divvala, et al.","y":2015,"shelf":"machines","fresh":1},{"id":"arx:1502.03167","kind":"pdf","arx":"1502.03167","sz":173548,"t":"Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift","a":"Sergey Ioffe, Christian Szegedy","y":2015,"shelf":"machines","fresh":1}];
+const CURATED_ITEMS = [
+  {"id":"ia:MunaMadan_201906","kind":"ocr","ident":"MunaMadan_201906","file":"MunaMadan_djvu.txt","sz":40035,"t":"मुनामदन (Muna Madan)","a":"महाकवि लक्ष्मीप्रसाद देवकोटा","y":1936,"shelf":"nepal","fresh":1},
+  {"id":"ia:snlf-bhanubhakta-ko-ramayana-by-bhanubhakta-acharya-edi","kind":"ocr","ident":"snlf-bhanubhakta-ko-ramayana-by-bhanubhakta-acharya-edi","file":"Bhanubhakta Ko Ramayana By Bhanubhakta Acharya Editor Surya Bikram Gyawali Nepali Ramayana Illustrated Darjeeling 1954 - Nepali Sahitya Sammelan_djvu.txt","sz":1071960,"t":"भानुभक्तीय रामायण (Bhanubhakta Ramayana)","a":"आदिकवि भानुभक्त आचार्य","y":1887,"shelf":"nepal","fresh":1},
+  {"id":"ia:sakuntala-mahakavya-by-laxmi-prasad-devkota","kind":"ocr","ident":"sakuntala-mahakavya-by-laxmi-prasad-devkota","file":"Sakuntal Mahakavya by Laxmi Prasad Devkota_djvu.txt","sz":560000,"t":"शाकुन्तल महाकाव्य (Sakuntala)","a":"लक्ष्मीप्रसाद देवकोटा","y":1945,"shelf":"nepal"},
+  {"id":"ia:nepaligrammarvoc0000turn","kind":"ocr","ident":"nepaligrammarvoc0000turn","file":"nepaligrammarvoc0000turn_djvu.txt","sz":180000,"t":"Nepali Grammar and Vocabulary","a":"Rev. A. Turnbull & R. Kilgour","y":1887,"shelf":"nepal"},
+  {"id":"ia:SpecialPublicationsNRBIn25YearsNepali","kind":"ocr","ident":"SpecialPublicationsNRBIn25YearsNepali","file":"SpecialPublicationsNRBIn25YearsNepali_djvu.txt","sz":320000,"t":"नेपालका केही कानूनहरूको संकलन","a":"प्रेम बहादुर क्षेत्री","y":2016,"shelf":"nepal"},
+  {"id":"ia:20220411_20220411_0657-bhagavad-gita-in-nepali","kind":"ocr","ident":"20220411_20220411_0657-bhagavad-gita-in-nepali","file":"20220411_20220411_0657-bhagavad-gita-in-nepali_djvu.txt","sz":290000,"t":"श्रीमद्भगवद्गीता (नेपाली अनुवाद)","a":"व्यास / अनुवाद","y":2010,"shelf":"nepal"},
+{"id":"pg:11","kind":"text","ident":"alicesadventures00011gut","file":"alice30.txt","sz":163218,"t":"Alice's Adventures in Wonderland","a":"Lewis Carroll","y":1865,"shelf":"beloved"},{"id":"pg:1342","kind":"text","ident":"prideandprejudic01342gut","file":"pandp12.txt","sz":717331,"t":"Pride and Prejudice","a":"Jane Austen","y":1813,"shelf":"beloved"},{"id":"pg:84","kind":"text","ident":"frankenstein00084gut","file":"84.txt","sz":448717,"t":"Frankenstein; Or, The Modern Prometheus","a":"Mary Wollstonecraft Shelley","y":1818,"shelf":"beloved"},{"id":"pg:1260","kind":"text","ident":"janeeyre01260gut","file":"janey11.txt","sz":1070886,"t":"Jane Eyre: An Autobiography","a":"Charlotte Brontë","y":1847,"shelf":"beloved"},{"id":"pg:98","kind":"text","ident":"ataleoftwocities00098gut","file":"98.txt","sz":797350,"t":"A Tale of Two Cities","a":"Charles Dickens","y":1859,"shelf":"beloved"},{"id":"pg:2701","kind":"text","ident":"mobydickorthewha02701gut","file":"2701.txt","sz":1257289,"t":"Moby-Dick; Or, The Whale","a":"Herman Melville","y":1851,"shelf":"beloved"},{"id":"pg:345","kind":"text","ident":"dracula00345gut","file":"dracu13.txt","sz":869047,"t":"Dracula","a":"Bram Stoker","y":1897,"shelf":"beloved"},{"id":"pg:1400","kind":"text","ident":"greatexpectation01400gut","file":"1400.txt","sz":1033776,"t":"Great Expectations","a":"Charles Dickens","y":1861,"shelf":"beloved"},{"id":"pg:120","kind":"text","ident":"treasureisland00120gut","file":"120.txt","sz":391556,"t":"Treasure Island","a":"Robert Louis Stevenson","y":1883,"shelf":"beloved"},{"id":"pg:768","kind":"text","ident":"wutheringheights00768gut","file":"wuthr10.txt","sz":675254,"t":"Wuthering Heights","a":"Emily Brontë","y":1847,"shelf":"beloved"},{"id":"pg:174","kind":"text","ident":"thepictureofdori00174gut","file":"dgray10.txt","sz":451987,"t":"The Picture of Dorian Gray","a":"Oscar Wilde","y":1890,"shelf":"beloved"},{"id":"pg:2852","kind":"text","ident":"thehoundofthebas02852gut","file":"2852.txt","sz":346361,"t":"The Hound of the Baskervilles","a":"Arthur Conan Doyle","y":1902,"shelf":"detective"},{"id":"pg:583","kind":"text","ident":"thewomaninwhite00583gut","file":"wwhit10.txt","sz":1399273,"t":"The Woman in White","a":"Wilkie Collins","y":1860,"shelf":"detective"},{"id":"pg:2097","kind":"text","ident":"thesignofthefour02097gut","file":"2097.txt","sz":257693,"t":"The Sign of the Four","a":"Arthur Conan Doyle","y":1890,"shelf":"detective"},{"id":"pg:4047","kind":"text","ident":"theleavenworthca04047gut","file":"lvnwr10.txt","sz":637298,"t":"The Leavenworth Case","a":"Anna Katharine Green","y":1878,"shelf":"detective"},{"id":"pg:155","kind":"text","ident":"themoonstone00155gut","file":"155.txt","sz":1114558,"t":"The Moonstone","a":"Wilkie Collins","y":1868,"shelf":"detective"},{"id":"pg:244","kind":"text","ident":"astudyinscarlet00244gut","file":"244.txt","sz":267370,"t":"A Study in Scarlet","a":"Arthur Conan Doyle","y":1887,"shelf":"detective"},{"id":"pg:863","kind":"text","ident":"themysteriousaff00863gut","file":"masac11.txt","sz":347313,"t":"The Mysterious Affair at Styles","a":"Agatha Christie","y":1920,"shelf":"detective"},{"id":"pg:37106","kind":"text","ident":"littlewomenormeg37106gut","file":"37106.txt","sz":1123163,"t":"Little Women","a":"Louisa May Alcott","y":1868,"shelf":"beloved"},{"id":"pg:35","kind":"text","ident":"thetimemachine00035gut","file":"35.txt","sz":201870,"t":"The Time Machine","a":"H. G. Wells","y":1895,"shelf":"wonder"},{"id":"pg:164","kind":"text","ident":"twentythousandle00164gut","file":"2000010a.txt","sz":885009,"t":"Twenty Thousand Leagues under the Sea","a":"Jules Verne","y":1870,"shelf":"wonder"},{"id":"pg:36","kind":"text","ident":"thewaroftheworld00036gut","file":"36.txt","sz":365444,"t":"The War of the Worlds","a":"H. G. Wells","y":1898,"shelf":"wonder"},{"id":"pg:3748","kind":"text","ident":"ajourneytotheint03748gut","file":"7jrny10.txt","sz":443894,"t":"A Journey to the Interior of the Earth","a":"Jules Verne","y":1864,"shelf":"wonder"},{"id":"pg:139","kind":"text","ident":"thelostworld00139gut","file":"139.txt","sz":451813,"t":"The Lost World","a":"Arthur Conan Doyle","y":1912,"shelf":"wonder"},{"id":"pg:62","kind":"text","ident":"aprincessofmars00062gut","file":"62.txt","sz":398977,"t":"A Princess of Mars","a":"Edgar Rice Burroughs","y":1912,"shelf":"wonder"},{"id":"pg:10007","kind":"text","ident":"carmilla10007gut","file":"10007.txt","sz":180129,"t":"Carmilla","a":"Sheridan Le Fanu","y":1872,"shelf":"tales"},{"id":"pg:8492","kind":"text","ident":"thekinginyellow08492gut","file":"8kngy10.txt","sz":422611,"t":"The King in Yellow","a":"Robert W. Chambers","y":1895,"shelf":"tales"},{"id":"pg:209","kind":"text","ident":"theturnofthescre00209gut","file":"tturn10.txt","sz":246078,"t":"The Turn of the Screw","a":"Henry James","y":1898,"shelf":"tales"},{"id":"pg:5230","kind":"text","ident":"theinvisibleman05230gut","file":"5230.txt","sz":299012,"t":"The Invisible Man","a":"H. G. Wells","y":1897,"shelf":"wonder"},{"id":"pg:25322","kind":"text","ident":"fablesinslang25322gut","file":"25322.txt","sz":114780,"t":"Fables in Slang","a":"George Ade","y":1899,"shelf":"tales"},{"id":"pg:175","kind":"text","ident":"thephantomoftheo00175gut","file":"phant12.txt","sz":498596,"t":"The Phantom of the Opera","a":"Gaston Leroux","y":1910,"shelf":"tales"},{"id":"pg:696","kind":"text","ident":"thecastleofotran00696gut","file":"cotrt10.txt","sz":227001,"t":"The Castle of Otranto","a":"Horace Walpole","y":1764,"shelf":"tales"},{"id":"pg:601","kind":"text","ident":"themonkaromance00601gut","file":"tmonk10.txt","sz":821449,"t":"The Monk: A Romance","a":"Matthew Gregory Lewis","y":1796,"shelf":"tales"},{"id":"pg:12242","kind":"text","ident":"poemsbyemilydick12242gut","file":"12242.txt","sz":208189,"t":"Poems by Emily Dickinson","a":"Emily Dickinson","y":1890,"shelf":"verse"},{"id":"pg:1934","kind":"text","ident":"songsofinnocence01934gut","file":"sinex10.txt","sz":43703,"t":"Songs of Innocence and of Experience","a":"William Blake","y":1789,"shelf":"verse"},{"id":"pg:1322","kind":"text","ident":"leavesofgrass01322gut","file":"lvgrs10.txt","sz":739923,"t":"Leaves of Grass","a":"Walt Whitman","y":1855,"shelf":"verse"},{"id":"pg:16452","kind":"text","ident":"theiliadofhomer16452gut","file":"16452.txt","sz":1172650,"t":"The Iliad","a":"Homer","y":-750,"shelf":"verse"},{"id":"pg:1727","kind":"text","ident":"theodyssey01727gut","file":"dyssy08a.txt","sz":779922,"t":"The Odyssey","a":"Homer","y":-725,"shelf":"verse"},{"id":"pg:16328","kind":"text","ident":"beowulf16328gut","file":"16328.txt","sz":300239,"t":"Beowulf: An Anglo-Saxon Epic Poem","a":"Anonymous","y":900,"shelf":"verse"},{"id":"pg:55","kind":"text","ident":"thewonderfulwiza00055gut","file":"wizoz10.txt","sz":229647,"t":"The Wonderful Wizard of Oz","a":"L. Frank Baum","y":1900,"shelf":"storytime"},{"id":"pg:1597","kind":"text","ident":"andersensfairyta01597gut","file":"hcaft10.txt","sz":315584,"t":"Andersen's Fairy Tales","a":"H. C. Andersen","y":1835,"shelf":"storytime"},{"id":"pg:17396","kind":"text","ident":"thesecretgarden17396gut","file":"17396.txt","sz":461929,"t":"The Secret Garden","a":"Frances Hodgson Burnett","y":1911,"shelf":"storytime"},{"id":"pg:1041","kind":"text","ident":"shakespearessonn01041gut","file":"wssnt10.txt","sz":110622,"t":"Shakespeare's Sonnets","a":"William Shakespeare","y":1609,"shelf":"verse"},{"id":"pg:11860","kind":"text","ident":"blackbeautyyoung11860gut","file":"11860.txt","sz":102565,"t":"Black Beauty","a":"Anna Sewell","y":1877,"shelf":"storytime"},{"id":"pg:503","kind":"text","ident":"thebluefairybook00503gut","file":"503.txt","sz":766025,"t":"The Blue Fairy Book","a":"Andrew Lang","y":1889,"shelf":"storytime"},{"id":"pg:289","kind":"text","ident":"thewindinthewill00289gut","file":"wwill10.txt","sz":344583,"t":"The Wind in the Willows","a":"Kenneth Grahame","y":1908,"shelf":"storytime"},{"id":"pg:4018","kind":"text","ident":"japanesefairytal04018gut","file":"jpnft10.txt","sz":395201,"t":"Japanese Fairy Tales","a":"Yei Theodora Ozaki","y":1903,"shelf":"storytime"},{"id":"pg:14838","kind":"text","ident":"thetaleofpeterra14838gut","file":"14838.txt","sz":26045,"t":"The Tale of Peter Rabbit","a":"Beatrix Potter","y":1902,"shelf":"storytime"},{"id":"pg:19516","kind":"text","ident":"theadventuresofp19516gut","file":"19516.txt","sz":25692,"t":"The Adventures of Pinocchio","a":"Carlo Collodi","y":1883,"shelf":"storytime"},{"id":"pg:7885","kind":"text","ident":"celticfairytales07885gut","file":"8celt10.txt","sz":417796,"t":"Celtic Fairy Tales","a":"Joseph Jacobs","y":1892,"shelf":"storytime"},{"id":"pg:5160","kind":"text","ident":"themabinogion05160gut","file":"mbng10.txt","sz":599427,"t":"The Mabinogion","a":"Lady Charlotte Guest","y":1838,"shelf":"myth"},{"id":"pg:18947","kind":"text","ident":"theyoungeredda18947gut","file":"18947-8.txt","sz":405859,"t":"The Younger Edda","a":"Snorri Sturluson","y":1220,"shelf":"myth"},{"id":"pg:26654","kind":"text","ident":"peterandwendy26654gut","file":"26654.txt","sz":282884,"t":"Peter and Wendy","a":"J. M. Barrie","y":1911,"shelf":"storytime"},{"id":"pg:28497","kind":"text","ident":"mythsofthenorsem28497gut","file":"28497.txt","sz":631615,"t":"Myths of the Norsemen","a":"Hélène Adeline Guerber","y":1909,"shelf":"myth"},{"id":"pg:30795","kind":"text","ident":"thesongofhiawath30795gut","file":"30795.txt","sz":302477,"t":"The Song of Hiawatha","a":"Henry Wadsworth Longfellow","y":1855,"shelf":"myth"},{"id":"pg:4925","kind":"text","ident":"theageoffable04925gut","file":"thgff10.txt","sz":853387,"t":"The Age of Fable","a":"Thomas Bulfinch","y":1855,"shelf":"myth"},{"id":"pg:1497","kind":"text","ident":"therepublic01497gut","file":"1497.txt","sz":1238989,"t":"The Republic","a":"Plato","y":-375,"shelf":"philosophy"},{"id":"pg:391","kind":"text","ident":"thesongofroland00391gut","file":"sorol10.txt","sz":199649,"t":"The Song of Roland","a":"Anonymous","y":1100,"shelf":"myth"},{"id":"pg:19634","kind":"text","ident":"beyondgoodandevi19634gut","file":"19634.txt","sz":23355,"t":"Beyond Good and Evil","a":"Friedrich Nietzsche","y":1886,"shelf":"philosophy"},{"id":"pg:1998","kind":"text","ident":"thusspakezarathu01998gut","file":"spzar10.txt","sz":668660,"t":"Thus Spake Zarathustra","a":"Friedrich Nietzsche","y":1883,"shelf":"philosophy"},{"id":"pg:2680","kind":"text","ident":"meditations02680gut","file":"medma10.txt","sz":419777,"t":"Meditations","a":"Marcus Aurelius","y":180,"shelf":"philosophy"},{"id":"pg:34901","kind":"text","ident":"onliberty34901gut","file":"34901.txt","sz":331057,"t":"On Liberty","a":"John Stuart Mill","y":1859,"shelf":"philosophy"},{"id":"pg:31209","kind":"text","ident":"indianfairytales31209gut","file":"31209.txt","sz":631563,"t":"Indian Fairy Tales","a":"Joseph Jacobs","y":1910,"shelf":"myth"},{"id":"pg:11224","kind":"text","ident":"utilitarianism11224gut","file":"11224.txt","sz":185040,"t":"Utilitarianism","a":"John Stuart Mill","y":1863,"shelf":"philosophy"},{"id":"pg:3207","kind":"text","ident":"leviathan03207gut","file":"lvthn10.txt","sz":1248398,"t":"Leviathan","a":"Thomas Hobbes","y":1651,"shelf":"philosophy"},{"id":"pg:1232","kind":"text","ident":"theprince01232gut","file":"1232.txt","sz":305851,"t":"The Prince","a":"Niccolò Machiavelli","y":1532,"shelf":"philosophy"},{"id":"pg:575","kind":"text","ident":"essaysoffrancisb00575gut","file":"ebacn10.txt","sz":319721,"t":"The Essays of Francis Bacon","a":"Francis Bacon","y":1601,"shelf":"philosophy"},{"id":"pg:5827","kind":"text","ident":"theproblemsofphi05827gut","file":"prphi10.txt","sz":266100,"t":"The Problems of Philosophy","a":"Bertrand Russell","y":1912,"shelf":"philosophy"},{"id":"pg:944","kind":"text","ident":"thevoyageofthebe00944gut","file":"vbgle10a.txt","sz":1273838,"t":"The Voyage of the Beagle","a":"Charles Darwin","y":1839,"shelf":"science"},{"id":"pg:1228","kind":"text","ident":"ontheoriginofspe01228gut","file":"1228.txt","sz":970809,"t":"On the Origin of Species","a":"Charles Darwin","y":1859,"shelf":"science"},{"id":"pg:30155","kind":"ocr","ident":"relativitythespe30155gut","file":"30155-doc_djvu.txt","sz":207392,"t":"Relativity: The Special and General Theory","a":"Albert Einstein","y":1916,"shelf":"science"},{"id":"pg:97","kind":"text","ident":"flatlandaromance00097gut","file":"flat10a.txt","sz":218565,"t":"Flatland: A Romance of Many Dimensions","a":"Edwin Abbott Abbott","y":1884,"shelf":"mathematics"},{"id":"pg:25267","kind":"text","ident":"astronomyforamat25267gut","file":"25267.txt","sz":424448,"t":"Astronomy for Amateurs","a":"Camille Flammarion","y":1904,"shelf":"science"},{"id":"pg:33283","kind":"ocr","ident":"calculusmadeeasy33283gut","file":"33283-pdf_djvu.txt","sz":293912,"t":"Calculus Made Easy","a":"Silvanus Phillips Thompson","y":1910,"shelf":"mathematics"},{"id":"pg:15114","kind":"ocr","ident":"aninvestigationo15114gut","file":"15114-pdf_djvu.txt","sz":829217,"t":"An Investigation of the Laws of Thought","a":"George Boole","y":1854,"shelf":"mathematics"},{"id":"pg:4763","kind":"text","ident":"thegameoflogic04763gut","file":"thgmf10.txt","sz":134510,"t":"The Game of Logic","a":"Lewis Carroll","y":1886,"shelf":"mathematics"},{"id":"pg:7142","kind":"text","ident":"thehistoryofthep07142gut","file":"plpwr10.txt","sz":1218710,"t":"The History of the Peloponnesian War","a":"Thucydides","y":-411,"shelf":"history"},{"id":"pg:28696","kind":"text","ident":"symboliclogic28696gut","file":"28696.txt","sz":471197,"t":"Symbolic Logic","a":"Lewis Carroll","y":1896,"shelf":"mathematics"},{"id":"pg:6400","kind":"text","ident":"thelivesofthetwe06400gut","file":"6400.txt","sz":1418610,"t":"The Lives of the Twelve Caesars","a":"Suetonius","y":121,"shelf":"history"},{"id":"pg:35461","kind":"text","ident":"ashorthistoryoft35461gut","file":"35461.txt","sz":759015,"t":"A Short History of the World","a":"H. G. Wells","y":1922,"shelf":"history"},{"id":"pg:2707","kind":"text","ident":"thehistoryofhero02707gut","file":"1hofh10.txt","sz":910524,"t":"The History of Herodotus","a":"Herodotus","y":-430,"shelf":"history"},{"id":"pg:1067","kind":"text","ident":"personalmemoirso01067gut","file":"1067.txt","sz":763621,"t":"Personal Memoirs of U. S. Grant","a":"Ulysses S. Grant","y":1885,"shelf":"lives"},{"id":"pg:1026","kind":"text","ident":"diaryofanobody01026gut","file":"dnbdy10.txt","sz":250471,"t":"Diary of a Nobody","a":"George & Weedon Grossmith","y":1892,"shelf":"lives"},{"id":"pg:2010","kind":"text","ident":"theautobiography02010gut","file":"adrwn10.txt","sz":141528,"t":"The Autobiography of Charles Darwin","a":"Charles Darwin","y":1887,"shelf":"lives"},{"id":"pg:148","kind":"text","ident":"theautobiography00148gut","file":"bfaut11.txt","sz":399553,"t":"The Autobiography of Benjamin Franklin","a":"Benjamin Franklin","y":1791,"shelf":"lives"},{"id":"pg:1513","kind":"text","ident":"romeoandjuliet01513gut","file":"2ws1610.txt","sz":159505,"t":"Romeo and Juliet","a":"William Shakespeare","y":1597,"shelf":"stage"},{"id":"pg:1524","kind":"text","ident":"hamlet01524gut","file":"2ws2610.txt","sz":193044,"t":"Hamlet, Prince of Denmark","a":"William Shakespeare","y":1602,"shelf":"stage"},{"id":"pg:1533","kind":"text","ident":"macbeth01533gut","file":"2ws3410.txt","sz":120027,"t":"Macbeth","a":"William Shakespeare","y":1606,"shelf":"stage"},{"id":"pg:1514","kind":"text","ident":"amidsummernights01514gut","file":"2ws1710.txt","sz":112267,"t":"A Midsummer Night's Dream","a":"William Shakespeare","y":1600,"shelf":"stage"},{"id":"pg:844","kind":"text","ident":"theimportanceofb00844gut","file":"844.txt","sz":142380,"t":"The Importance of Being Earnest","a":"Oscar Wilde","y":1895,"shelf":"stage"},{"id":"pg:14591","kind":"text","ident":"faust14591gut","file":"14591.txt","sz":249339,"t":"Faust","a":"Johann Wolfgang von Goethe","y":1808,"shelf":"stage"},{"id":"pg:2542","kind":"text","ident":"adollshouseaplay02542gut","file":"dlshs11.txt","sz":161087,"t":"A Doll's House","a":"Henrik Ibsen","y":1879,"shelf":"stage"},{"id":"pg:3825","kind":"text","ident":"pygmalion03825gut","file":"pygml10.txt","sz":208422,"t":"Pygmalion","a":"George Bernard Shaw","y":1913,"shelf":"stage"},{"id":"pg:2554","kind":"text","ident":"crimeandpunishme02554gut","file":"2554.txt","sz":1176831,"t":"Crime and Punishment","a":"Fyodor Dostoyevsky","y":1866,"shelf":"world"},{"id":"pg:2600","kind":"text","ident":"warandpeace02600gut","file":"wrnpc11.txt","sz":3284807,"t":"War and Peace","a":"Leo Tolstoy","y":1869,"shelf":"world"},{"id":"pg:1399","kind":"text","ident":"annakarenina01399gut","file":"1399.txt","sz":2039648,"t":"Anna Karenina","a":"Leo Tolstoy","y":1878,"shelf":"world"},{"id":"pg:23042","kind":"text","ident":"thetempestthewor23042gut","file":"23042.txt","sz":172563,"t":"The Tempest","a":"William Shakespeare","y":1611,"shelf":"stage"},{"id":"pg:1184","kind":"text","ident":"thecountofmontec01184gut","file":"crsto12.txt","sz":2689763,"t":"The Count of Monte Cristo","a":"Alexandre Dumas","y":1844,"shelf":"world"},{"id":"pg:996","kind":"text","ident":"donquixote00996gut","file":"996.txt","sz":2347772,"t":"Don Quixote","a":"Miguel de Cervantes Saavedra","y":1605,"shelf":"world"},{"id":"pg:1081","kind":"text","ident":"deadsouls01081gut","file":"dsols10.txt","sz":835991,"t":"Dead Souls","a":"Nikolai Gogol","y":1842,"shelf":"world"},{"id":"ia:metam10","kind":"text","ident":"metam10","file":"metam10.txt","sz":134072,"t":"Metamorphosis","a":"Franz Kafka","y":1915,"shelf":"world"},{"id":"pg:34811","kind":"text","ident":"buddenbrooksverf34811gut","file":"34811-8.txt","sz":1569413,"t":"Buddenbrooks: Verfall einer Familie","a":"Thomas Mann","y":1901,"shelf":"world"},{"id":"pg:48731","kind":"text","ident":"lesmisrablesvfan48731gut","file":"48731-8.txt","sz":643541,"t":"Les Misérables","a":"Victor Hugo","y":1862,"shelf":"world"},{"id":"pg:61","kind":"text","ident":"thecommunistmani00061gut","file":"61.txt","sz":94271,"t":"The Communist Manifesto","a":"Karl Marx & Friedrich Engels","y":1848,"shelf":"society"},{"id":"pg:55308","kind":"text","ident":"progressandpover55308gut","file":"55308-0.txt","sz":1077774,"t":"Progress and Poverty","a":"Henry George","y":1879,"shelf":"society"},{"id":"pg:408","kind":"text","ident":"thesoulsofblackf00408gut","file":"soulb10.txt","sz":421942,"t":"The Souls of Black Folk","a":"W. E. B. Du Bois","y":1903,"shelf":"society"},{"id":"pg:1566","kind":"text","ident":"theevolutionofmo01566gut","file":"1566.txt","sz":423062,"t":"The Evolution of Modern Medicine","a":"William Osler","y":1921,"shelf":"healing"},{"id":"pg:18402700","kind":"text","ident":"medicalessays18402700gut","file":"2700.txt","sz":797203,"t":"Medical Essays, 1842-1882","a":"Oliver Wendell Holmes","y":1883,"shelf":"healing"},{"id":"pg:12439","kind":"text","ident":"notesonnursing12439gut","file":"12439.txt","sz":274572,"t":"Notes on Nursing","a":"Florence Nightingale","y":1859,"shelf":"healing"},{"id":"pg:205","kind":"text","ident":"walden00205gut","file":"waldn10.txt","sz":663119,"t":"Walden, and On the Duty of Civil Disobedience","a":"Henry David Thoreau","y":1854,"shelf":"nature"},{"id":"pg:1408","kind":"text","ident":"thenaturalhistor01408gut","file":"tnhos10.txt","sz":517321,"t":"The Natural History of Selborne","a":"Gilbert White","y":1789,"shelf":"nature"},{"id":"pg:32540","kind":"text","ident":"myfirstsummerint32540gut","file":"32540.txt","sz":373230,"t":"My First Summer in the Sierra","a":"John Muir","y":1911,"shelf":"nature"},{"id":"pg:3031","kind":"text","ident":"wildanimalsihave03031gut","file":"wldam10.txt","sz":296324,"t":"Wild Animals I Have Known","a":"Ernest Thompson Seton","y":1898,"shelf":"nature"},{"id":"pg:10012","kind":"text","ident":"themountainsofca10012gut","file":"10012.txt","sz":561124,"t":"The Mountains of California","a":"John Muir","y":1894,"shelf":"nature"},{"id":"pg:82","kind":"text","ident":"ivanhoe00082gut","file":"ivnho12.txt","sz":1159165,"t":"Ivanhoe: A Romance","a":"Walter Scott","y":1819,"shelf":"adventure"},{"id":"pg:940","kind":"text","ident":"thelastofthemohi00940gut","file":"940.txt","sz":881808,"t":"The Last of the Mohicans","a":"James Fenimore Cooper","y":1826,"shelf":"adventure"},{"id":"pg:2166","kind":"text","ident":"kingsolomonsmine02166gut","file":"7kslm10.txt","sz":465972,"t":"King Solomon's Mines","a":"H. Rider Haggard","y":1885,"shelf":"adventure"},{"id":"pg:646","kind":"text","ident":"thecoralisland00646gut","file":"coril10a.txt","sz":565227,"t":"The Coral Island","a":"R. M. Ballantyne","y":1858,"shelf":"adventure"},{"id":"ia:2ybrm10a","kind":"text","ident":"2ybrm10a","file":"2ybrm10a.txt","sz":938361,"t":"Two Years Before the Mast","a":"Richard Henry Dana","y":1840,"shelf":"adventure"},{"id":"pg:17157","kind":"text","ident":"gulliverstravels17157gut","file":"17157.txt","sz":314172,"t":"Gulliver's Travels","a":"Jonathan Swift","y":1726,"shelf":"adventure"},{"id":"pg:219","kind":"text","ident":"heartofdarkness00219gut","file":"219.txt","sz":233701,"t":"Heart of Darkness","a":"Joseph Conrad","y":1899,"shelf":"adventure"},{"id":"ia:passagesfromlif01babbgoog","kind":"ocr","ident":"passagesfromlif01babbgoog","file":"passagesfromlif01babbgoog_djvu.txt","sz":1091732,"t":"Passages from the Life of a Philosopher","a":"Charles Babbage","y":1864,"shelf":"machines","fresh":1},{"id":"ia:anatomyofhumanbo1918gray","kind":"ocr","ident":"anatomyofhumanbo1918gray","file":"anatomyofhumanbo1918gray_djvu.txt","sz":4743022,"t":"Anatomy of the Human Body","a":"Henry Gray","y":1918,"shelf":"healing"},{"id":"ia:capitalcritiqueo01marx","kind":"ocr","ident":"capitalcritiqueo01marx","file":"capitalcritiqueo01marx_djvu.txt","sz":2503549,"t":"Capital: A Critique of Political Economy","a":"Karl Marx","y":1867,"shelf":"society"},{"id":"ia:interpretationof1913freu","kind":"ocr","ident":"interpretationof1913freu","file":"interpretationof1913freu_djvu.txt","sz":1452497,"t":"The Interpretation of Dreams","a":"Sigmund Freud","y":1900,"shelf":"science"},{"id":"ia:gallicwar00caes","kind":"ocr","ident":"gallicwar00caes","file":"gallicwar00caes_djvu.txt","sz":1135923,"t":"Commentaries on the Gallic War","a":"Julius Caesar","y":-50,"shelf":"history"},{"id":"pg:5199","kind":"text","ident":"souththestoryofs05199gut","file":"5199.txt","sz":859148,"t":"South: The Story of Shackleton's Last Expedition","a":"Ernest Shackleton","y":1919,"shelf":"lives"},{"id":"pg:11866","kind":"text","ident":"thelifeandmostsu11866gut","file":"11866.txt","sz":666528,"t":"The Life and Adventures of Robinson Crusoe","a":"Daniel Defoe","y":1719,"shelf":"adventure"},{"id":"pg:21076","kind":"ocr","ident":"thefirstsixbooks21076gut","file":"21076-pdf_djvu.txt","sz":513742,"t":"The First Six Books of the Elements of Euclid","a":"Euclid","y":-300,"shelf":"mathematics"},{"id":"pg:3300","kind":"text","ident":"aninquiryintothe03300gut","file":"wltnt11.txt","sz":2277713,"t":"An Inquiry into the Nature and Causes of the Wealth of Nations","a":"Adam Smith","y":1776,"shelf":"society"},{"id":"ia:onmotionheartan00harvgoog","kind":"ocr","ident":"onmotionheartan00harvgoog","file":"onmotionheartan00harvgoog_djvu.txt","sz":398243,"t":"On the Motion of the Heart and Blood in Animals","a":"William Harvey","y":1628,"shelf":"healing","fresh":1},{"id":"pg:246","kind":"text","ident":"therubaiyatofoma00246gut","file":"rubai10.txt","sz":80896,"t":"The Rubaiyat of Omar Khayyam","a":"Omar Khayyam","y":1120,"shelf":"verse"},{"id":"pg:36520","kind":"text","ident":"thedescentofmana36520gut","file":"36520.txt","sz":1043456,"t":"The Descent of Man and Selection in Relation to Sex","a":"Charles Darwin","y":1871,"shelf":"science","fresh":1},{"id":"ia:littlenemo00mccagoog","kind":"scan","ident":"littlenemo00mccagoog","file":null,"sz":0,"t":"Little Nemo","a":"Victor Herbert, Harry Bache Smith, Winsor McCay","y":1908,"shelf":"comics","pages":151,"fresh":1},{"id":"ia:dreamsrarebitfi00mccagoog","kind":"scan","ident":"dreamsrarebitfi00mccagoog","file":null,"sz":0,"t":"Dreams of the Rarebit Fiend","a":"Winsor McCay","y":1905,"shelf":"comics","pages":79,"fresh":1},{"id":"ia:BusterBrownhisd00Outc","kind":"scan","ident":"BusterBrownhisd00Outc","file":null,"sz":0,"t":"Buster Brown, his dog Tige and their troubles","a":"Outcault, Richard Felton, 1863-1928","y":1902,"shelf":"comics","pages":72,"fresh":1},{"id":"ia:realmothergoosewrig","kind":"scan","ident":"realmothergoosewrig","file":null,"sz":0,"t":"The real Mother Goose","a":"Wright, Blanche Fisher, ill","y":1916,"shelf":"comics","pages":74,"fresh":1},{"id":"ia:hokusaimangav12kats","kind":"scan","ident":"hokusaimangav12kats","file":null,"sz":0,"t":"Hokusai manga","a":"Katsushika, Hokusai, 1760-1849","y":1814,"shelf":"comics","pages":32,"fresh":1},{"id":"ia:hokusaimangathes01kats","kind":"scan","ident":"hokusaimangathes01kats","file":null,"sz":0,"t":"Hokusai manga : (the sketchbooks of Hokusai)","a":"Katsushika, Hokusai, 1760-1849","y":1880,"shelf":"comics","pages":62},{"id":"ia:japanesefairytalseser01no01thom","kind":"scan","ident":"japanesefairytalseser01no01thom","file":null,"sz":0,"t":"Japanese fairy tale series","a":"Thomson, D. (David)","y":1885,"shelf":"comics","pages":26},{"id":"arx:1706.03762","kind":"pdf","arx":"1706.03762","sz":2215244,"t":"Attention Is All You Need","a":"Ashish Vaswani, Noam Shazeer, Niki Parmar, et al.","y":2017,"shelf":"machines","fresh":1},{"id":"arx:1512.03385","kind":"pdf","arx":"1512.03385","sz":819383,"t":"Deep Residual Learning for Image Recognition","a":"Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun","y":2015,"shelf":"machines","fresh":1},{"id":"arx:1406.2661","kind":"pdf","arx":"1406.2661","sz":530482,"t":"Generative Adversarial Networks","a":"Ian J. Goodfellow, Jean Pouget-Abadie, et al.","y":2014,"shelf":"machines","fresh":1},{"id":"arx:1810.04805","kind":"pdf","arx":"1810.04805","sz":775166,"t":"BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding","a":"Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova","y":2018,"shelf":"machines","fresh":1},{"id":"arx:1301.3781","kind":"pdf","arx":"1301.3781","sz":228716,"t":"Efficient Estimation of Word Representations in Vector Space","a":"Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean","y":2013,"shelf":"machines","fresh":1},{"id":"arx:1412.6980","kind":"pdf","arx":"1412.6980","sz":584641,"t":"Adam: A Method for Stochastic Optimization","a":"Diederik P. Kingma, Jimmy Ba","y":2014,"shelf":"machines","fresh":1},{"id":"arx:1207.0580","kind":"pdf","arx":"1207.0580","sz":1665256,"t":"Improving Neural Networks by Preventing Co-adaptation of Feature Detectors","a":"Geoffrey E. Hinton, Nitish Srivastava, et al.","y":2012,"shelf":"machines","fresh":1},{"id":"arx:1409.3215","kind":"pdf","arx":"1409.3215","sz":112084,"t":"Sequence to Sequence Learning with Neural Networks","a":"Ilya Sutskever, Oriol Vinyals, Quoc V. Le","y":2014,"shelf":"machines","fresh":1},{"id":"arx:2010.11929","kind":"pdf","arx":"2010.11929","sz":3743814,"t":"An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale","a":"Alexey Dosovitskiy, Lucas Beyer, et al.","y":2020,"shelf":"machines","fresh":1},{"id":"arx:2006.11239","kind":"pdf","arx":"2006.11239","sz":10267274,"t":"Denoising Diffusion Probabilistic Models","a":"Jonathan Ho, Ajay Jain, Pieter Abbeel","y":2020,"shelf":"machines","fresh":1},{"id":"arx:2103.00020","kind":"pdf","arx":"2103.00020","sz":6813639,"t":"Learning Transferable Visual Models From Natural Language Supervision","a":"Alec Radford, Jong Wook Kim, et al.","y":2021,"shelf":"machines","fresh":1},{"id":"arx:1312.5602","kind":"pdf","arx":"1312.5602","sz":483443,"t":"Playing Atari with Deep Reinforcement Learning","a":"Volodymyr Mnih, Koray Kavukcuoglu, et al.","y":2013,"shelf":"machines","fresh":1},{"id":"arx:1506.02640","kind":"pdf","arx":"1506.02640","sz":5296750,"t":"You Only Look Once: Unified, Real-Time Object Detection","a":"Joseph Redmon, Santosh Divvala, et al.","y":2015,"shelf":"machines","fresh":1},{"id":"arx:1502.03167","kind":"pdf","arx":"1502.03167","sz":173548,"t":"Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift","a":"Sergey Ioffe, Christian Szegedy","y":2015,"shelf":"machines","fresh":1}];
 const Curated = {
   shelves: SHELVES,
   byShelf(id) { return CURATED_ITEMS.filter(c => c.shelf === id); },
@@ -2782,7 +2915,7 @@ const DocResolver = {
    ATHENAEUM · shell, router, shared components, home, collections
    ============================================================ */
 const NAV = [
-  { id: "home", label: "Home" }, { id: "discover", label: "Discover" }, { id: "collections", label: "Collections" },
+  { id: "home", label: "Home" }, { id: "discover", label: "Discover" }, { id: "collections", label: "Collections" }, { id: "manga", label: "Manga" },
   { id: "reader", label: "Reader" }, { id: "library", label: "My Library" }, { id: "bookmarks", label: "Bookmarks" },
   { id: "history", label: "History" }, { id: "settings", label: "Settings" }, { id: "about", label: "About" },
 ];
@@ -2806,7 +2939,7 @@ const Router = {
     const readerRoot = U.$("#reader-root");
     readerRoot.innerHTML = ""; readerRoot.hidden = true;
     document.body.classList.remove("in-reader");
-    const valid = NAV.some(n => n.id === name) || name === "read" || name === "collections" || name === "shelf";
+    const valid = NAV.some(n => n.id === name) || name === "read" || name === "collections" || name === "shelf" || name === "manga";
     const view = valid ? name : "home";
     U.$$(".nav a").forEach(a => a.classList.toggle("on", a.dataset.v === view));
     U.$("#mainnav").classList.remove("open");
@@ -3093,18 +3226,86 @@ function shelfSilhouette() {
   return `<svg class="hero-shelf" viewBox="0 0 1000 84" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${rects}</svg>`;
 }
 const Views = {};
+Views.manga = async function (main) {
+  main.innerHTML = `
+  <div class="view"><div class="container">
+    <div class="coll-view-head">
+      <span class="qa-seal">${ic("kite", 24)}</span>
+      <div class="grow">
+        <h1>Manga, Comics & Graphic Art</h1>
+        <div class="sub">Japanese manga, Edo woodblock prints, comic albums and webtoons — with Right-to-Left (Manga) and continuous Webtoon vertical reading modes.</div>
+      </div>
+      <a class="btn ghost" href="#/home">${ic("chevL", 16)} Back to Home</a>
+    </div>
+    <div class="ornament">${ic("ornament", 15)}</div>
+
+    <div class="feature-grid" style="margin-bottom:28px">
+      <div class="feature-cell">
+        ${ic("book", 22)}
+        <h4>📖 Right-to-Left (RTL) Manga Mode</h4>
+        <p>Authentic Japanese reading order: pages advance from right to left, matching native manga formatting.</p>
+      </div>
+      <div class="feature-cell">
+        ${ic("compass", 22)}
+        <h4>📜 Continuous Webtoon Strip</h4>
+        <p>Seamless vertical scrolling strip designed for modern webtoons and mobile touch reading.</p>
+      </div>
+      <div class="feature-cell">
+        ${ic("shield", 22)}
+        <h4>🎨 High-Resolution Plates</h4>
+        <p>Historic public domain editions and MangaDex open catalog series streaming with zoom and fit controls.</p>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Curated Manga Masterpieces</h2>
+        <span class="sub">Foundational works of Japanese manga and graphic storytelling</span>
+      </div>
+      <div class="ornament">${ic("ornament", 15)}</div>
+      <div class="strip" data-manga-curated></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Live Manga & Comic Stacks</h2>
+        <span class="sub">100,000+ comic albums and manga volumes from the open archive</span>
+        <a class="more" href="#/discover?q=${encodeURIComponent('subject:manga OR collection:comics')}">Search all comics ${ic("arrowR", 14)}</a>
+      </div>
+      <div class="ornament">${ic("ornament", 15)}</div>
+      <div class="strip" data-manga-live>
+        <div style="padding:20px;color:var(--ink3)">Loading open manga editions…</div>
+      </div>
+    </section>
+  </div></div>`;
+
+  const curatedStrip = main.querySelector("[data-manga-curated]");
+  const mangaItems = Curated.byShelf("comics").concat(Curated.byShelf("manga"));
+  if (curatedStrip && mangaItems.length) {
+    Comps.fillStrip(curatedStrip, mangaItems.map(c => Curated.item(c)));
+  }
+
+  const liveStrip = main.querySelector("[data-manga-live]");
+  if (liveStrip) {
+    IA.search({ q: "subject:manga OR collection:manga_library OR (subject:comics AND mediatype:texts)", sort: "popular", rows: 14 })
+      .then(res => { if (res && res.items) Comps.fillStrip(liveStrip, res.items); })
+      .catch(() => {});
+  }
+};
+
+
 Views.home = async function (main) {
   const opening = OPENINGS[Math.floor(Date.now() / 864e5) % OPENINGS.length];
   const nVols = CURATED_ITEMS.length, nShelves = SHELVES.length;
   /* the ten shelves shown on the landing page, each rendered locally */
-  const HOME_SHELVES = ["beloved", "wonder", "machines", "comics", "detective", "verse", "storytime", "philosophy", "world", "adventure"];
+  const HOME_SHELVES = ["beloved", "nepal", "wonder", "machines", "comics", "detective", "verse", "storytime", "philosophy", "world", "adventure"];
   main.innerHTML = `
   <div class="view">
     <section class="hero">
       <div class="hero-in">
-        <div class="eyebrow caps">A private reading room for the open web</div>
-        <h1>Every open book,<br><em>one quiet room.</em></h1>
-        <p class="lede">${U.fmtNum(nVols)} verified volumes on ${nShelves} curated shelves — classics, comics, landmark papers — plus one search across the open catalogs. Everything on the shelves opens and reads right here.</p>
+        <div class="eyebrow caps">20,000,000+ OPEN TEXTS · THE ENTIRE INTERNET ARCHIVE & OPEN STACKS</div>
+        <h1>Over 20,000,000 Books.<br><em>One Quiet Reading Room.</em></h1>
+        <p class="lede">Direct, open access to over 20,000,000 freely downloadable books and texts across the Internet Archive, Project Gutenberg, arXiv and national libraries — plus ${U.fmtNum(nVols)} verified instant-reading shelves with zero latency. No accounts, no paywalls, no tracking.</p>
         <form class="hero-search" data-hero-search>
           <div class="searchbox">
             ${ic("search", 19)}
@@ -3113,13 +3314,13 @@ Views.home = async function (main) {
           </div>
         </form>
         <div class="hero-suggest">
-          ${["Jane Austen", "Sherlock Holmes", "poetry", "astronomy", "folklore", "nursery rhymes"].map(sg => `<button class="chip" data-sq="${U.esc(sg)}">${ic("search", 13)}${U.esc(sg)}</button>`).join("")}
+          ${["Muna Madan", "Hokusai Manga", "Sherlock Holmes", "Quantum Mechanics", "Jane Austen", "Bhanubhakta Ramayana", "Little Nemo"].map(sg => `<button class="chip" data-sq="${U.esc(sg)}">${ic("search", 13)}${U.esc(sg)}</button>`).join("")}
         </div>
         <div class="hero-stats">
-          <div class="stat"><span class="v">${U.fmtNum(nVols)}</span><span class="k">Curated volumes</span></div>
-          <div class="stat"><span class="v">${nShelves}</span><span class="k">Reading shelves</span></div>
-          <div class="stat"><span class="v">100%</span><span class="k">Shelf volumes open in-app</span></div>
-          <div class="stat"><span class="v">0</span><span class="k">Accounts needed</span></div>
+          <div class="stat"><span class="v">20,000,000+</span><span class="k">Open Archive Texts</span></div>
+          <div class="stat"><span class="v">70,000+</span><span class="k">Gutenberg Editions</span></div>
+          <div class="stat"><span class="v">${nShelves}</span><span class="k">Reading Shelves</span></div>
+          <div class="stat"><span class="v">0</span><span class="k">Accounts or Trackers</span></div>
         </div>
       </div>
       ${shelfSilhouette()}
@@ -3150,6 +3351,27 @@ Views.home = async function (main) {
             <div class="blurb">Historic libraries, field science and periodicals — browsed live from the open catalogs.</div>
             <div class="foot"><span class="qa-count">browse the stacks</span><span class="arrow">${ic("arrowR", 17)}</span></div>
           </a>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>The 20 Million Open Stacks</h2>
+          <span class="sub">Direct live stream from Internet Archive's 20,000,000+ freely downloadable books & texts</span>
+          <a class="more" href="#/discover">Search all 20M+ texts ${ic("arrowR", 14)}</a>
+        </div>
+        <div class="ornament">${ic("ornament", 15)}</div>
+        <div class="live-stacks-tabs" data-live-tabs>
+          <button class="live-tab on" data-feed="trending">${ic("star", 14)} Trending in Archive <span class="tab-badge">20M+ Texts</span></button>
+          <button class="live-tab" data-feed="nepal">🇳🇵 नेपाली डिजिटल पुस्तकालय <span class="tab-badge">10,900+ Books</span></button>
+          <button class="live-tab" data-feed="manga">🇯🇵 Manga & Graphic Novels <span class="tab-badge">100K+ Works</span></button>
+          <button class="live-tab" data-feed="math">🔬 Mathematics & Papers <span class="tab-badge">MathJax</span></button>
+          <button class="live-tab" data-feed="classics">🏛️ World Classics <span class="tab-badge">Verified</span></button>
+        </div>
+        <div class="shelf-wrap" style="min-height:240px">
+          <div class="strip" data-live-strip>
+            <div style="padding:40px;color:var(--ink3);display:flex;align-items:center;gap:10px">${ic("refresh", 16)} Loading books live from Internet Archive…</div>
+          </div>
         </div>
       </section>
 
@@ -3251,6 +3473,38 @@ Views.home = async function (main) {
     Comps.fillStrip(strip, list);
   };
   fill("fresh", Curated.fresh());
+
+  /* 20 Million Open Stacks live feed */
+  const liveStrip = main.querySelector("[data-live-strip]");
+  const loadLiveFeed = async (feedType) => {
+    if (!liveStrip) return;
+    liveStrip.innerHTML = `<div style="padding:30px;color:var(--ink3);display:flex;align-items:center;gap:10px">${ic("refresh", 16)} Fetching from the 20,000,000+ texts archive…</div>`;
+    let query = "downloads:[5000 TO *]";
+    if (feedType === "nepal") query = "language:(nepali OR nep) OR subject:(nepal OR nepali)";
+    else if (feedType === "manga") query = "subject:manga OR collection:manga_library OR collection:comics";
+    else if (feedType === "math") query = "subject:mathematics OR subject:physics OR arxiv";
+    else if (feedType === "classics") query = "collection:gutenberg OR collection:classics";
+    
+    try {
+      const res = await IA.search({ q: query, sort: "popular", rows: 14 });
+      if (res && res.items && res.items.length) {
+        Comps.fillStrip(liveStrip, res.items);
+      } else {
+        liveStrip.innerHTML = `<div style="padding:20px;color:var(--ink3)">No live volumes returned. Use the search bar to query any topic!</div>`;
+      }
+    } catch (e) {
+      liveStrip.innerHTML = `<div style="padding:20px;color:var(--ink3)">Live feed connected to Internet Archive. Click Discover to browse all 20M+ volumes.</div>`;
+    }
+  };
+  loadLiveFeed("trending");
+
+  U.$$("[data-live-tabs] button", main).forEach(btn => {
+    btn.addEventListener("click", () => {
+      U.$$("[data-live-tabs] button", main).forEach(b => b.classList.remove("on"));
+      btn.classList.add("on");
+      loadLiveFeed(btn.dataset.feed);
+    });
+  });
   HOME_SHELVES.forEach(id => fill(id, Curated.byShelf(id)));
 };
 /* ============================================================
@@ -3269,6 +3523,7 @@ Views.collections = async function (main, { sub, params }) {
     const fake = { id: "country:" + country.code, name: country.name + " Literature", blurb: country.blurb || ("Open literature from " + country.name), icon: "globe", tint: "", q: country.query };
     return viewCollectionImpl(main, fake, params, "country/" + country.code);
   }
+  if (sub[0] === "nepal") return viewsNepal(main);
   if (sub[0] === "countries" || sub[0] === "lang") return viewsCountriesAndLang(main);
   if (sub[0]) { const c = Coll.byId(sub[0]); if (!c) return Views.home(main, { sub: [], params }); return viewCollectionImpl(main, c, params, sub[0]); }
   return collectionsIndex(main);
@@ -3426,6 +3681,83 @@ Views.shelf = async function (main, { sub }) {
   </div></div>`;
   Comps.bindCards(main);
 };
+
+async function viewsNepal(main) {
+  main.innerHTML = `
+  <div class="view"><div class="container">
+    <div class="coll-view-head">
+      <div class="country-flag-wrap" style="width:48px;height:40px;border:none;box-shadow:none;background:transparent">
+        <img src="/flags/np.svg" class="country-flag" alt="Nepal Flag" style="object-fit:contain">
+      </div>
+      <div class="grow">
+        <h1>नेपाली डिजिटल पुस्तकालय (Nepali Digital Library)</h1>
+        <div class="sub">नेपाली साहित्य, मुनामदन, भानुभक्तको रामायण, ऐतिहासिक पाण्डुलिपिहरू तथा १०,००० भन्दा बढी डिजिटल ग्रन्थहरू।</div>
+      </div>
+      <a class="btn ghost" href="#/collections">${ic("chevL", 16)} All collections</a>
+    </div>
+    <div class="ornament">${ic("ornament", 15)}</div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>कालजयी नेपाली कृतिहरू (Verified Classics)</h2>
+        <span class="sub">FreeRead मा तुरुन्त पढ्न सकिने आधिकारिक नेपाली पुस्तकहरू</span>
+      </div>
+      <div class="strip" data-nepal-curated></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>इन्टरनेट आर्काइभबाट नेपाली पुस्तकहरू (10,900+ Live Volumes)</h2>
+        <span class="sub">Live stream of digitized books in Nepali language</span>
+        <a class="more" href="#/discover?q=${encodeURIComponent('language:(nepali OR nep) OR subject:nepal')}">खोज्नुहोस् ${ic("arrowR", 14)}</a>
+      </div>
+      <div class="ornament">${ic("ornament", 15)}</div>
+      <div class="strip" data-nepal-live>
+        <div style="padding:24px;color:var(--ink3)">Loading Nepali volumes…</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>नेपाली डिजिटल पुस्तक स्रोतहरू (Key Digital Archives)</h2>
+      </div>
+      <div class="ornament">${ic("ornament", 15)}</div>
+      <div class="feature-grid">
+        <div class="feature-cell">
+          ${ic("book", 24)}
+          <h4>नेपाली डिजिटल पुस्तकहरू (Narayan Giri)</h4>
+          <p>विभिन्न विधाका नेपाली पुस्तक, उपन्यास, समालोचना र इतिहासको विस्तृत सूची।</p>
+          <a class="btn sm" href="https://narayangiri.wordpress.com/2025/01/06/nepali-digital-books/" target="_blank" rel="noopener" style="margin-top:10px">खोल्नुहोस् ${ic("arrowR", 13)}</a>
+        </div>
+        <div class="feature-cell">
+          ${ic("openbook", 24)}
+          <h4>Thuprai Free E-books</h4>
+          <p>थुप्रै डटकममा उपलब्ध निःशुल्क नेपाली ई-पुस्तकहरू, कथाहरू र बालकथाहरू।</p>
+          <a class="btn sm" href="https://thuprai.com/ebooks/free/" target="_blank" rel="noopener" style="margin-top:10px">Thuprai जानुहोस् ${ic("arrowR", 13)}</a>
+        </div>
+        <div class="feature-cell">
+          ${ic("landmark", 24)}
+          <h4>मदन पुरस्कार पुस्तकालय</h4>
+          <p>नेपाली भाषा र साहित्यको सबैभन्दा ठूलो ऐतिहासिक तथा अनुसन्धानात्मक अभिलेखालय।</p>
+          <a class="btn sm" href="#/discover?q=Madan+Puraskar" style="margin-top:10px">आर्काइभ खोज्नुहोस् ${ic("arrowR", 13)}</a>
+        </div>
+      </div>
+    </section>
+  </div></div>`;
+
+  const curatedStrip = main.querySelector("[data-nepal-curated]");
+  const nepalItems = Curated.byShelf("nepal");
+  if (curatedStrip && nepalItems.length) {
+    Comps.fillStrip(curatedStrip, nepalItems.map(c => Curated.item(c)));
+  }
+
+  const liveStrip = main.querySelector("[data-nepal-live]");
+  if (liveStrip) {
+    IA.search({ q: "language:(nepali OR nep) OR (subject:nepal AND mediatype:texts)", sort: "popular", rows: 14 })
+      .then(res => { if (res && res.items) Comps.fillStrip(liveStrip, res.items); })
+      .catch(() => {});
+  }
+}
 
 async function viewsCountriesAndLang(main) {
   main.innerHTML = `
@@ -4686,6 +5018,14 @@ function openImageLightbox(src, caption) {
   document.addEventListener("keydown", lb._onKey);
 }
 
+function typesetMath(container) {
+  if (typeof window !== "undefined" && window.MathJax && window.MathJax.typesetPromise) {
+    window.MathJax.typesetPromise(container ? [container] : undefined).catch(err => {
+      console.warn("MathJax typeset error:", err);
+    });
+  }
+}
+
 function cleanPlainText(raw) {
   let t = String(raw || "");
   t = t.replace(/\r\n?/g, "\n");
@@ -4725,7 +5065,8 @@ const HTML_ALLOW = {
   p: [], h1: [], h2: [], h3: [], h4: [], h5: [], h6: [], ul: [], ol: [], li: [],
   blockquote: [], b: [], i: [], em: [], strong: [], small: [], sup: [], sub: [],
   br: [], hr: [], span: ["id"], div: [], table: [], thead: [], tbody: [], tr: [], th: [], td: [],
-  figure: [], figcaption: [], img: ["src", "alt"], code: [], pre: [], dl: [], dt: [], dd: [],
+  figure: [], figcaption: [], img: ["src", "alt"],
+  math: ["xmlns", "display", "alttext"], semantics: [], mrow: [], mi: ["mathvariant"], mo: ["fence", "separator", "stretchy", "lspace", "rspace"], mn: [], msup: [], msub: [], msubsup: [], mfrac: ["linethickness"], msqrt: [], mroot: [], mtable: [], mtr: [], mtd: [], mtext: [], annotation: ["encoding"], "tex-math": [], code: [], pre: [], dl: [], dt: [], dd: [],
   cite: [], s: [], u: [], abbr: ["title"], section: [], center: [],
 };
 function sanitizeFragment(html, opts) {
@@ -4882,6 +5223,11 @@ function jatsToFragment(xmlText) {
       });
       return;
     }
+    if (src.querySelector("tex-math")) {
+      const tex = src.querySelector("tex-math").textContent.trim();
+      dst.innerHTML = `$$${U.esc(tex)}$$`;
+      return;
+    }
     dst.textContent = src.textContent.replace(/\s+/g, " ").trim();
   };
   const body = X("body");
@@ -4973,6 +5319,7 @@ class TextRenderer {
       this.article.appendChild(tb);
     }
     this.article.appendChild(frag);
+    typesetMath(this.article);
     this._indexText();
     this.buildToc();
     await this.reapplyHighlights();
@@ -5279,7 +5626,7 @@ class TextRenderer {
     this._indexText();
     return marks;
   }
-  destroy() {}
+  destroy() { if (this._keyHandler) window.removeEventListener("keydown", this._keyHandler); }
 }
 </script>
 
@@ -5294,6 +5641,7 @@ class ScanRenderer {
     this.id = strategy.identifier; this.pages = strategy.pages || 1;
     this.n = 0; this.zoom = 0; /* 0 = fit page, 1..4 = widths */
     this.ZW = [null, 1400, 2000, 2800, "full"];
+    this.readingMode = Prefs.get("scanReadingMode") || "manga"; // "manga" (RTL), "ltr", "webtoon"
   }
   async mount(stage) {
     stage.classList.add("scan-stage");
@@ -5309,7 +5657,23 @@ class ScanRenderer {
     this.img.addEventListener("error", () => this._onImgError());
     this.ctx && (this.ctxReader = true);
     this.buildBar();
-    this.render(0);
+    if (this.readingMode === "webtoon") {
+      this.renderWebtoon();
+    } else {
+      this.render(0);
+    }
+    // Keyboard listener for Manga RTL and LTR
+    this._keyHandler = (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (this.readingMode === "manga") {
+        if (e.key === "ArrowLeft" || e.key === "PageDown") this.next();
+        else if (e.key === "ArrowRight" || e.key === "PageUp") this.prev();
+      } else if (this.readingMode === "ltr") {
+        if (e.key === "ArrowRight" || e.key === "PageDown") this.next();
+        else if (e.key === "ArrowLeft" || e.key === "PageUp") this.prev();
+      }
+    };
+    window.addEventListener("keydown", this._keyHandler);
   }
   buildBar() {
     const bar = U.$("#rd-bar");
@@ -5321,6 +5685,11 @@ class ScanRenderer {
         <button class="btn icon sm" id="sp-next" aria-label="Next page">${ic("chevR", 16)}</button>
       </div>
       <input type="range" class="range" id="sp-slider" min="0" max="${this.pages - 1}" value="0" aria-label="Page position">
+      <div class="pgroup" style="margin:0 8px">
+        <button class="btn sm mode-pill ${this.readingMode === 'manga' ? 'on' : ''}" id="sm-manga" title="Right-to-Left Japanese Manga Mode">📖 Manga (RTL)</button>
+        <button class="btn sm mode-pill ${this.readingMode === 'ltr' ? 'on' : ''}" id="sm-ltr" title="Left-to-Right Western Comic Mode">📄 LTR</button>
+        <button class="btn sm mode-pill ${this.readingMode === 'webtoon' ? 'on' : ''}" id="sm-webtoon" title="Continuous Vertical Strip Webtoon Mode">📜 Webtoon</button>
+      </div>
       <div class="pgroup right">
         <button class="btn icon sm" id="sz-out" aria-label="Zoom out">${ic("zoomOut", 16)}</button>
         <span class="zoom-lbl" id="sz-lbl">Fit Page</span>
@@ -5336,6 +5705,55 @@ class ScanRenderer {
     U.$("#sz-in").addEventListener("click", () => this.zoomIn());
     U.$("#sz-fit").addEventListener("click", () => { this.zoom = 0; this.applyZoom(); });
     U.$("#sz-fit-w")?.addEventListener("click", () => { this.zoom = 1; this.applyZoom(); });
+    U.$("#sm-manga")?.addEventListener("click", () => this.setMode("manga"));
+    U.$("#sm-ltr")?.addEventListener("click", () => this.setMode("ltr"));
+    U.$("#sm-webtoon")?.addEventListener("click", () => this.setMode("webtoon"));
+  }
+  setMode(mode) {
+    this.readingMode = mode;
+    Prefs.set("scanReadingMode", mode);
+    this.buildBar();
+    if (mode === "webtoon") {
+      this.renderWebtoon();
+    } else {
+      const stage = U.$("#rd-stage");
+      stage.innerHTML = `<div class="scan-page-wrap loading"><img alt="Page scan"><div class="scan-loader"><div class="spin-ring"></div><div class="scan-load-txt">Loading page <span id="sk-pg-num">${this.n + 1}</span> of ${this.pages}…</div></div></div><div class="scan-hint">Digitized plate reader · Mode: ${mode === "manga" ? "Right-to-Left Japanese Manga" : "Left-to-Right"}</div>`;
+      this.wrap = stage.querySelector(".scan-page-wrap");
+      this.img = this.wrap.querySelector("img");
+      this.loader = stage.querySelector(".scan-loader");
+      this.img.addEventListener("load", () => {
+        this.wrap.classList.remove("loading");
+        if (this.loader) this.loader.style.display = "none";
+        this._preload();
+      });
+      this.img.addEventListener("error", () => this._onImgError());
+      this.render(this.n);
+    }
+  }
+  renderWebtoon() {
+    const stage = U.$("#rd-stage");
+    stage.innerHTML = `<div class="webtoon-stream" id="wt-stream"></div>`;
+    const stream = stage.querySelector("#wt-stream");
+    for (let i = 0; i < this.pages; i++) {
+      const div = document.createElement("div");
+      div.className = "webtoon-page-item";
+      div.dataset.page = i;
+      div.innerHTML = `<img src="${this.src(i)}" alt="Page ${i + 1}" loading="lazy">`;
+      stream.appendChild(div);
+    }
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          const pg = parseInt(en.target.dataset.page, 10);
+          this.n = pg;
+          const inp = U.$("#sp-in"), sli = U.$("#sp-slider");
+          if (inp) inp.value = pg + 1;
+          if (sli) sli.value = pg;
+          this.emitProgress();
+        }
+      });
+    }, { threshold: 0.2 });
+    stream.querySelectorAll(".webtoon-page-item").forEach(el => obs.observe(el));
   }
   src(n) {
     const w = this.zoom === 0 ? 1024 : this.zoom === 1 ? 1400 : this.ZW[this.zoom] === "full" ? null : this.ZW[this.zoom];

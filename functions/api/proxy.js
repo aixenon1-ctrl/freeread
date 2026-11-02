@@ -28,7 +28,11 @@ const ALLOWED_HOSTS = [
   "ebi.ac.uk",
   "www.ebi.ac.uk",
   "openalex.org",
-  "api.openalex.org"
+  "api.openalex.org",
+  "api.mangadex.org",
+  "uploads.mangadex.org",
+  "cmd.mangadex.org",
+  "thuprai.com"
 ];
 
 function isPrivateOrLocalIp(host) {
