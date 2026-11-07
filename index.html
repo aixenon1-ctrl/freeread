@@ -3742,7 +3742,7 @@ const Comps = {
      the catalog's generic stand-in graphic is dropped. Done per element so it
      works no matter how or when the images finish loading. */
   processOverlays(root) {
-    U.$("img[data-ia-cover]", root || document).forEach(img => {
+    U.$$("img[data-ia-cover]", root || document).forEach(img => {
       if (img.dataset.iaDone) return;
       img.dataset.iaDone = "1";
       const settle = () => {
