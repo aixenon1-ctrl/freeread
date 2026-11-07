@@ -33,7 +33,8 @@ const ALLOWED_HOSTS = [
   "uploads.mangadex.org",
   "cmd.mangadex.org",
   "mangadex.network",
-  "thuprai.com"
+  "thuprai.com",
+  "wikipedia.org"
 ];
 
 function isPrivateOrLocalIp(host) {
@@ -156,22 +157,31 @@ export async function onRequest(context) {
   }
 
   // Check Cloudflare Cache
-  const cache = caches.default;
-  const cacheKey = new Request(reqUrl.toString(), request);
-  if (request.method === "GET") {
-    const cachedResponse = await cache.match(cacheKey);
-    if (cachedResponse) {
-      const hitHeaders = new Headers(cachedResponse.headers);
-      hitHeaders.set("X-Cache-Status", "HIT");
-      for (const [k, v] of Object.entries(CORS_HEADERS)) {
-        hitHeaders.set(k, v);
-      }
-      return new Response(cachedResponse.body, {
-        status: cachedResponse.status,
-        statusText: cachedResponse.statusText,
-        headers: hitHeaders
-      });
+  let cache = null;
+  let cacheKey = null;
+  try {
+    if (typeof caches !== "undefined" && caches && caches.default) {
+      cache = caches.default;
+      cacheKey = new Request(reqUrl.toString(), request);
     }
+  } catch (_) {}
+
+  if (cache && cacheKey && request.method === "GET") {
+    try {
+      const cachedResponse = await cache.match(cacheKey);
+      if (cachedResponse) {
+        const hitHeaders = new Headers(cachedResponse.headers);
+        hitHeaders.set("X-Cache-Status", "HIT");
+        for (const [k, v] of Object.entries(CORS_HEADERS)) {
+          hitHeaders.set(k, v);
+        }
+        return new Response(cachedResponse.body, {
+          status: cachedResponse.status,
+          statusText: cachedResponse.statusText,
+          headers: hitHeaders
+        });
+      }
+    } catch (_) {}
   }
 
   // Build clean upstream request
@@ -216,8 +226,10 @@ export async function onRequest(context) {
     });
 
     // Cache successful GET responses (status 200) in Cloudflare edge cache
-    if (request.method === "GET" && upstreamResponse.status === 200) {
-      context.waitUntil(cache.put(cacheKey, modifiedResponse.clone()));
+    if (cache && cacheKey && request.method === "GET" && upstreamResponse.status === 200 && context && context.waitUntil) {
+      try {
+        context.waitUntil(cache.put(cacheKey, modifiedResponse.clone()));
+      } catch (_) {}
     }
 
     return modifiedResponse;

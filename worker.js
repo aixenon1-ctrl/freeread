@@ -12,12 +12,12 @@ export default {
 
     // Route /api/proxy
     if (url.pathname === "/api/proxy") {
-      return proxyHandler({ request, env, waitUntil: ctx.waitUntil.bind(ctx) });
+      return proxyHandler({ request, env, waitUntil: (p) => ctx && ctx.waitUntil ? ctx.waitUntil(p) : Promise.resolve(p) });
     }
 
     // Route /api/health
     if (url.pathname === "/api/health") {
-      return healthHandler({ request, env, waitUntil: ctx.waitUntil.bind(ctx) });
+      return healthHandler({ request, env, waitUntil: (p) => ctx && ctx.waitUntil ? ctx.waitUntil(p) : Promise.resolve(p) });
     }
 
     // Static Assets fallback (index.html, etc.)
