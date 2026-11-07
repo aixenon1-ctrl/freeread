@@ -2623,10 +2623,9 @@ const IA = {
      · EPUB and PDF files on the archival host do NOT permit browser access,
        so they are never offered as readable — the record says so honestly */
   async resolve(identifier) {
+    if (identifier === "MunaMadan_201906") identifier = "MunaMadan";
     const cur = Curated.byIdent(identifier);
-    if (cur) return Object.assign(this.textStrategy(cur), {
-      title: cur.t, byline: cur.a, year: cur.y, desc: "", lang: "eng", subjects: [],
-    });
+    if (cur) return Curated.strategy(cur);
     const m = await this.meta(identifier);
     if (!m || !m.metadata) return null;
     const files = m.files || [];
@@ -2667,8 +2666,10 @@ const IA = {
 
     // Non-English works with page scans: default to the authentic original digitized scans
     const isNonEnglish = (base.lang && !/^(en|eng|english)$/i.test(base.lang)) ||
-                         /[\u0900-\u097F\u3040-\u30FF\u4E00-\u9FFF\u0600-\u06FF]/.test(base.title);
-    if (isNonEnglish && imagecount > 1) {
+                         /[\u0900-\u097F\u3040-\u30FF\u4E00-\u9FFF\u0600-\u06FF]/.test(base.title) ||
+                         /muna\s*madan|devkota|bhanubhakta|ramayana|sakuntala|nepal/i.test(identifier) ||
+                         /muna\s*madan|devkota|bhanubhakta|ramayana|sakuntala|nepal/i.test(base.title);
+    if (isNonEnglish && (imagecount > 0 || hasJp2 || hasScandata)) {
       return Object.assign(base, {
         type: "scan", identifier, pages: imagecount,
         ocrUrl: djvuTxt ? this.dlUrl(identifier, djvuTxt.name) : (anyTxt ? this.dlUrl(identifier, anyTxt.name) : null),
@@ -2785,7 +2786,11 @@ const PG = {
    ADAPTER · transcribed texts (community transcription library)
    ============================================================ */
 const WS = {
-  api(lang) { return "https://" + (lang || "en") + ".wikisource.org/w/api.php"; },
+  api(lang) {
+    if (!lang || lang === "en") return "https://en.wikisource.org/w/api.php";
+    if (["ne", "mul", "sa", "hi", "fa", "bo"].includes(lang)) return "https://wikisource.org/w/api.php";
+    return "https://" + lang + ".wikisource.org/w/api.php";
+  },
   stripTags(s) { return String(s || "").replace(/<[^>]*>/g, ""); },
   async search(p) {
     const u = new URL(this.api(p.lang));
@@ -3069,7 +3074,7 @@ const SHELVES = [
   { id: "nature", name: "Field & garden", blurb: "Mountains, sierra summers and the naturalists' letters.", icon: "leaf", tint: "t-nature" },
 ];
 const CURATED_ITEMS = [
-  {"id":"ia:MunaMadan_201906","kind":"scan","ident":"MunaMadan_201906","pages":48,"t":"मुनामदन (Muna Madan)","a":"लक्ष्मीप्रसाद देवकोटा","y":1936,"shelf":"nepal","fresh":1},
+  {"id":"ia:MunaMadan","kind":"scan","ident":"MunaMadan","pages":51,"t":"मुनामदन (Muna Madan)","a":"लक्ष्मीप्रसाद देवकोटा","y":1936,"shelf":"nepal","fresh":1},
   {"id":"ia:snlf-bhanubhakta-ko-ramayana-by-bhanubhakta-acharya-edi","kind":"scan","ident":"snlf-bhanubhakta-ko-ramayana-by-bhanubhakta-acharya-edi","pages":270,"t":"भानुभक्त रामायण (Bhanubhakta Ramayana)","a":"आदिकवि भानुभक्त आचार्य","y":1887,"shelf":"nepal","fresh":1},
   {"id":"ia:sakuntala-mahakavya-by-laxmi-prasad-devkota","kind":"scan","ident":"sakuntala-mahakavya-by-laxmi-prasad-devkota","pages":624,"t":"शाकुन्तल महाकाव्य (Sakuntala)","a":"लक्ष्मीप्रसाद देवकोटा","y":1945,"shelf":"nepal"},
   {"id":"ia:nepaligrammarvoc0000turn","kind":"scan","ident":"nepaligrammarvoc0000turn","pages":196,"t":"Nepali Grammar and Vocabulary","a":"Rev. A. Turnbull & R. Kilgour","y":1887,"shelf":"nepal"},
@@ -3105,9 +3110,9 @@ const CURATED_ITEMS = [
 const Curated = {
   shelves: SHELVES,
   byShelf(id) { return CURATED_ITEMS.filter(c => c && c.shelf === id); },
-  byId(id) { return CURATED_ITEMS.find(c => c && c.id === id) || null; },
+  byId(id) { if (id === "ia:MunaMadan_201906") id = "ia:MunaMadan"; return CURATED_ITEMS.find(c => c && c.id === id) || null; },
   byPg(pg) { return CURATED_ITEMS.find(c => c && c.id === "pg:" + pg) || null; },
-  byIdent(ident) { return CURATED_ITEMS.find(c => c && c.ident === ident) || null; },
+  byIdent(ident) { if (ident === "MunaMadan_201906") ident = "MunaMadan"; return CURATED_ITEMS.find(c => c && c.ident === ident) || null; },
   fresh() { return CURATED_ITEMS.filter(c => c && c.fresh); },
   fmtYear(c) { const y = c.y; return y == null ? "" : y < 0 ? Math.abs(y) + " BC" : String(y); },
   item(c) {
@@ -3136,7 +3141,7 @@ const Curated = {
     return { type: "text", url, fmt: c.kind === "ocr" ? "ocr" : "txt", fallbacks, key: c.id, ident: c.ident };
   },
   strategy(c) {
-    if (c.kind === "scan") return { type: "scan", identifier: c.ident, pages: c.pages || 0 };
+    if (c.kind === "scan") return { type: "scan", identifier: c.ident, pages: c.pages || 0, ident: c.ident, key: c.id };
     if (c.kind === "pdf") return { type: "pdf", url: "https://arxiv.org/pdf/" + c.arx, arx: c.arx };
     return this.textStrategy(c);
   },
@@ -5904,6 +5909,22 @@ buildShell(doc) {
     try {
       if (targetFmt === "text") {
         this.currentFormat = "text";
+        let ident = this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier) || (this.doc && this.doc.id && this.doc.id.replace(/^ia:/, ""));
+        if (/muna\s*madan/i.test((this.doc && this.doc.title) || "") || ident === "MunaMadan" || ident === "MunaMadan_201906") {
+          try {
+            const wsPage = await WS.fetchPage("ne", "मुनामदन");
+            if (wsPage && wsPage.html) {
+              const textStrat = { type: "wshtml", html: wsPage.html, sections: wsPage.sections || [], key: this.doc.id, ident };
+              this.renderer = new TextRenderer(this.doc, textStrat, Ctx);
+              await this.renderer.mount(stage);
+              Toast.ok("Switched to Clean Devanagari Text");
+              const lbl = U.$("#rd-fmt-label");
+              if (lbl) lbl.innerHTML = `${ic("book", 14)} Devanagari Text`;
+              U.$(".rd-fmt-opt").forEach(opt => opt.classList.toggle("on", opt.dataset.fmt === "text"));
+              return;
+            }
+          } catch (e) {}
+        }
         let ocrUrl = this.strategy.ocrUrl || this.strategy.url;
         let ident = this.strategy.ident || this.strategy.identifier || (this.doc && this.doc.read && this.doc.read.identifier) || (this.doc && this.doc.id && this.doc.id.replace(/^ia:/, ""));
         if (!ocrUrl && ident) {
@@ -5920,7 +5941,7 @@ buildShell(doc) {
 
         // If ident is missing, or is an e-text Gutenberg mirror (*gut has no scanned JP2 plates),
         // automatically locate the genuine historical library scan plates from Internet Archive!
-        if (!ident || ident.endsWith("gut") || !pages || pages <= 50) {
+        if (!ident || ident.endsWith("gut") || !pages || pages < 1) {
           Toast.show("Locating original library scan plates…");
           const scanned = await IA.findScannedEdition(this.doc.title, this.doc.byline);
           if (scanned && scanned.identifier) {
@@ -6037,6 +6058,14 @@ function typesetMath(container) {
       });
     }
   }
+}
+
+function isCorruptOcr(txt) {
+  if (!txt || txt.length < 50) return false;
+  const sample = txt.slice(0, 3000);
+  const junkMatches = sample.match(/[\^\\+?=#<>*~«»£§{}\/\|%]/g);
+  const junkRatio = (junkMatches ? junkMatches.length : 0) / sample.length;
+  return junkRatio > 0.04;
 }
 
 function cleanPlainText(raw) {
@@ -6321,6 +6350,16 @@ class TextRenderer {
       frag = this.fragFromHtml(html, { remove: ['[class*="license"]', '[class*="boilerplate"]', '[id*="license"]'] });
     } else {
       const txt = await this.fetchText(st);
+      const isCorrupt = (this.fmt === "ocr" || (this.strategy && this.strategy.fmt === "ocr") || (st && st.fmt === "ocr")) && isCorruptOcr(txt);
+      if (isCorrupt) {
+        console.warn("Corrupt OCR detected, switching to scan mode.");
+        let ident = (this.strategy && this.strategy.ident) || (this.doc && this.doc.read && this.doc.read.identifier) || (this.strategy && this.strategy.identifier);
+        if (ident && !ident.endsWith("gut")) {
+          Toast.warn("Corrupt OCR text detected — switching to authentic Digitized Page Scans");
+          setTimeout(() => Reader.setFormat("scan"), 200);
+          return;
+        }
+      }
       frag = this.fragFromPlain(Prefs.get("textCleanup") ? cleanPlainText(txt) : txt);
     }
     this.article.innerHTML = "";
