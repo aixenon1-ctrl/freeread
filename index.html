@@ -457,7 +457,7 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .shelf-strip > *{scroll-snap-align:start; flex:none}
 /* every card in a horizontal shelf shares one fixed width, so previews
    never balloon with long titles (the small/big cover bug) */
-.shelf-strip .vol-card{width:176px}
+.shelf-strip .vol-card{width:176px; flex:none}
 .shelf-strip .paper-card{width:340px; flex:none}
 .shelf-strip .sk-col{width:176px; display:flex; flex-direction:column; gap:8px}
 .shelf-arrow{
@@ -513,8 +513,43 @@ input[type="range"].range::-moz-range-thumb{width:14px; height:14px; border-radi
 .cover-ph .t{font-family:var(--f-display); font-size:15px; font-weight:600; line-height:1.2; color:var(--ink2); max-height:73px; overflow:hidden}
 .cover-ph .a{font-size:10.5px; color:var(--ink3); letter-spacing:.05em; text-transform:uppercase}
 .cover-ph .orn{width:16px; height:16px; margin:0 auto; color:var(--rule3)}
-.cover-ph.paper .t{font-size:13.5px}
-.cover-ph.paper .ct{font-size:20px; font-family:var(--f-display); color:var(--ink2); font-weight:700}
+.cover-ph.paper{
+  background: linear-gradient(155deg, color-mix(in srgb, var(--surfH) 82%, #fff 18%), var(--surf2));
+  border-left: 3.5px solid var(--ok);
+  text-align: left;
+  padding: 16px 14px;
+  justify-content: flex-start;
+}
+.cover-ph.paper .ct{
+  font-size: 10px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ok);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px;
+}
+.cover-ph.paper .t{
+  font-family: var(--f-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.28;
+  color: var(--ink);
+  max-height: 76px;
+  overflow: hidden;
+  text-align: left;
+}
+.cover-ph.paper .a{
+  font-size: 11px;
+  color: var(--ink3);
+  margin-top: auto;
+  text-align: left;
+}
+.cover-ph.paper .orn{
+  display: none;
+}
 .vol-card .vt{font-size:14px; font-weight:500; line-height:1.32; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 .vol-card .va{font-size:12.5px; color:var(--ink3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .vol-card .vy{font-size:11.5px; color:var(--ink3); display:flex; gap:8px; align-items:center}
@@ -3077,9 +3112,12 @@ const Curated = {
   fmtYear(c) { const y = c.y; return y == null ? "" : y < 0 ? Math.abs(y) + " BC" : String(y); },
   item(c) {
     const pdf = c.kind === "pdf", scan = c.kind === "scan";
+    const pg = (c.id && c.id.startsWith("pg:") && c.id.slice(3)) || c.pg;
     const ident = c.ident || (c.id && c.id.startsWith("ia:") && c.id.slice(3));
-    const cover = pdf ? null : ident ? ("https://archive.org/services/img/" + encodeURIComponent(ident))
-      : (c.id && c.id.startsWith("pg:") ? ("https://www.gutenberg.org/cache/epub/" + c.id.slice(3) + "/pg" + c.id.slice(3) + ".cover.medium.jpg") : null);
+    const cover = pdf ? null
+      : pg ? ("https://www.gutenberg.org/cache/epub/" + pg + "/pg" + pg + ".cover.medium.jpg")
+      : (ident && !/gut$/.test(ident)) ? ("https://archive.org/services/img/" + encodeURIComponent(ident))
+      : null;
     return {
       id: c.id, src: pdf ? "arx" : "ia",
       title: c.t, byline: c.a, year: c.y, yearLabel: this.fmtYear(c),
@@ -3615,14 +3653,20 @@ const Comps = {
   /* All covers are typeset in-app on parchment: one exact size everywhere,
      zero remote images, zero catalog branding, zero loading time. */
   coverUrl(item) {
-    if (item.cover) return item.cover;
-    const ident = (item.read && item.read.identifier) || (item.id && item.id.startsWith("ia:") && item.id.slice(3)) || item.ident;
-    if (ident && (item.src === "ia" || (item.id && item.id.startsWith("ia:")) || (item.read && item.read.kind === "ia"))) {
-      return "https://archive.org/services/img/" + encodeURIComponent(ident);
-    }
     const pg = (item.id && item.id.startsWith("pg:") && item.id.slice(3)) || item.pg;
     if (pg && /^\d+$/.test(pg)) {
       return "https://www.gutenberg.org/cache/epub/" + pg + "/pg" + pg + ".cover.medium.jpg";
+    }
+    if (item.cover) {
+      if (typeof item.cover === "string" && /archive\.org\/services\/img\/.*gut$/i.test(item.cover)) {
+        if (pg) return "https://www.gutenberg.org/cache/epub/" + pg + "/pg" + pg + ".cover.medium.jpg";
+        return null;
+      }
+      return item.cover;
+    }
+    const ident = (item.read && item.read.identifier) || (item.id && item.id.startsWith("ia:") && item.id.slice(3)) || item.ident;
+    if (ident && !/gut$/.test(ident) && (item.src === "ia" || (item.id && item.id.startsWith("ia:")) || (item.read && item.read.kind === "ia"))) {
+      return "https://archive.org/services/img/" + encodeURIComponent(ident);
     }
     if (item.src === "ol" && item.coverId) {
       return "https://covers.openlibrary.org/b/id/" + encodeURIComponent(item.coverId) + "-M.jpg";
@@ -3633,24 +3677,15 @@ const Comps = {
     const badge = this.badge(item);
     const paper = item.src === "pmc" || item.src === "ox" || item.src === "arx";
     const ph = paper
-      ? `<div class="cover-ph paper"><span class="ct">${U.esc(U.initials(item.title))}</span><span class="t">${U.esc(item.title)}</span>${ic("ornament", 16, "orn")}</div>`
+      ? `<div class="cover-ph paper"><span class="ct">Research Paper</span><span class="t">${U.esc(item.title)}</span>${item.byline ? `<span class="a">${U.esc(item.byline.split(",")[0])}</span>` : ""}${ic("ornament", 14, "orn")}</div>`
       : `<div class="cover-ph"><span class="t">${U.esc(item.title)}</span>${item.byline ? `<span class="a">${U.esc(item.byline.split(",")[0])}</span>` : ""}${ic("ornament", 16, "orn")}</div>`;
     const curl = !paper ? this.coverUrl(item) : null;
     const imgHtml = curl
-      ? `<img class="ph-overlay" src="${U.esc(curl)}" alt="" loading="lazy" data-ia-cover="1" onload="this.classList.add('ok')" onerror="this.remove()">`
+      ? `<img class="ph-overlay" src="${U.esc(curl)}" alt="" loading="lazy" data-ia-cover="1" onload="if((this.naturalWidth===160&&this.naturalHeight===110)||(this.naturalWidth===320&&this.naturalHeight===220)||(this.naturalWidth>0&&this.naturalHeight>0&&this.naturalWidth>=this.naturalHeight)||this.naturalWidth<40||this.naturalHeight<40){this.remove();}else{this.classList.add('ok');}" onerror="this.remove()">`
       : "";
     return `<div class="cover-wrap ${extraCls || ""}">${ph}${imgHtml}${badge}</div>`;
   },
   volCard(item) {
-    const isPaper = item.src === "pmc" || item.src === "ox" || item.src === "arx";
-    if (isPaper) {
-      return `<article class="paper-card" data-doc="${U.esc(item.id)}" tabindex="0" role="button" aria-label="${U.esc(item.title)}">
-        <div class="vt">${U.esc(U.scrub(item.title))}</div>
-        <div class="meta"><span>${U.esc(U.scrub(item.byline) || "—")}</span>${item.yearLabel || item.year ? `<span>· ${U.esc(item.yearLabel || item.year)}</span>` : ""}${item.subjects && item.subjects[0] ? `<span>· ${U.esc(U.scrub(item.subjects[0]))}</span>` : ""}</div>
-        ${item.desc ? `<div class="abs">${U.esc(U.scrub(item.desc))}</div>` : ""}
-        <div class="foot">${this.badge(item)}<span class="kind right">${U.esc(item.kindLabel)}</span></div>
-      </article>`;
-    }
     return `<article class="vol-card" data-doc="${U.esc(item.id)}" tabindex="0" role="button" aria-label="${U.esc(item.title)}">
       ${this.cover(item)}
       <div class="vt" title="${U.esc(item.title)}">${U.esc(item.title)}</div>
@@ -3707,13 +3742,14 @@ const Comps = {
      the catalog's generic stand-in graphic is dropped. Done per element so it
      works no matter how or when the images finish loading. */
   processOverlays(root) {
-    U.$$("img[data-ia-cover]", root || document).forEach(img => {
+    U.$("img[data-ia-cover]", root || document).forEach(img => {
       if (img.dataset.iaDone) return;
       img.dataset.iaDone = "1";
       const settle = () => {
         if (!img.isConnected) return;
-        const generic = img.naturalWidth === 320 && img.naturalHeight === 220;
-        if (generic || img.naturalWidth < 40 || img.naturalHeight < 40) img.remove();
+        const w = img.naturalWidth || 0, h = img.naturalHeight || 0;
+        const isPlaceholder = (w === 160 && h === 110) || (w === 320 && h === 220) || (w > 0 && h > 0 && w >= h) || w < 40 || h < 40;
+        if (isPlaceholder) img.remove();
         else img.classList.add("ok");
       };
       if (img.complete && img.naturalWidth != null) settle();
